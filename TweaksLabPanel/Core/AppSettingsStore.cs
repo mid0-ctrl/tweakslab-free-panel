@@ -18,6 +18,8 @@ public sealed class AppSettingsStore
     public string KeyboardLayout { get; private set; } = "azerty";
     public bool OnboardingCompleted { get; private set; }
     public bool EasterEggUnlocked { get; private set; }
+    public DateTime LastUpdateCheckUtc { get; private set; }
+    public string? SkippedUpdateVersion { get; private set; }
 
     public void Load()
     {
@@ -38,6 +40,8 @@ public sealed class AppSettingsStore
 
             OnboardingCompleted = data.OnboardingCompleted;
             EasterEggUnlocked = data.EasterEggUnlocked;
+            LastUpdateCheckUtc = data.LastUpdateCheckUtc;
+            SkippedUpdateVersion = data.SkippedUpdateVersion;
         }
         catch
         {
@@ -76,6 +80,18 @@ public sealed class AppSettingsStore
         Persist();
     }
 
+    public void MarkUpdateChecked()
+    {
+        LastUpdateCheckUtc = DateTime.UtcNow;
+        Persist();
+    }
+
+    public void SkipUpdateVersion(string tag)
+    {
+        SkippedUpdateVersion = tag.Trim();
+        Persist();
+    }
+
     private void Persist()
     {
         try
@@ -90,6 +106,8 @@ public sealed class AppSettingsStore
                 KeyboardLayout = KeyboardLayout,
                 OnboardingCompleted = OnboardingCompleted,
                 EasterEggUnlocked = EasterEggUnlocked,
+                LastUpdateCheckUtc = LastUpdateCheckUtc,
+                SkippedUpdateVersion = SkippedUpdateVersion,
             };
             File.WriteAllText(_path, JsonSerializer.Serialize(data, JsonOptions));
         }
@@ -105,5 +123,7 @@ public sealed class AppSettingsStore
         public string KeyboardLayout { get; set; } = "azerty";
         public bool OnboardingCompleted { get; set; }
         public bool EasterEggUnlocked { get; set; }
+        public DateTime LastUpdateCheckUtc { get; set; }
+        public string? SkippedUpdateVersion { get; set; }
     }
 }

@@ -88,4 +88,13 @@ public static class LocalizationService
     public static string ReviewsInfo => T(
         "Avis renouvelés toutes les 2 semaines.",
         "Reviews refreshed every 2 weeks.");
+    public static string UpdateAvailableTitle => T("Mise à jour disponible", "Update available");
+    public static string UpdateDefaultNotes => T("Une nouvelle version du panel est prête.", "A new panel version is ready.");
+    public static string UpdateDownloading => T("Téléchargement en cours…", "Downloading…");
+    public static string UpdateAvailableMessage(string version, string notes) => IsEnglish
+        ? $"Version {version} is available.\n\n{notes}\n\nInstall now? The panel will restart."
+        : $"La version {version} est disponible.\n\n{notes}\n\nInstaller maintenant ? Le panel va redémarrer.";
+    public static string UpdateFailed(string detail) => IsEnglish
+        ? $"Update failed.\n\n{detail}"
+        : $"Échec de la mise à jour.\n\n{detail}";
 }

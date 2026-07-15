@@ -25,6 +25,7 @@ public partial class App : Application
             GpuVendorStore.Instance.Load();
             PerformanceScoreService.Initialize();
             _ = PerformanceScoreService.EnsureScannedAsync();
+            UpdateService.QueueStartupCheck();
 
             StartupLog.Write("Creation MainWindow");
             var main = new MainWindow();

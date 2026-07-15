@@ -5,6 +5,8 @@ namespace TweaksLabPanel.Core;
 public static class PanelEndpoints
 {
     public const string UpdatesBaseUrl = "https://tweakslab-free-panel-updates.onrender.com";
+    public const string GitHubLatestReleaseApi =
+        "https://api.github.com/repos/mid0-ctrl/tweakslab-free-panel/releases/latest";
     public const string ChatBaseUrl = "https://tweakslab-bot-production.up.railway.app";
     public const string ChatPanelPath = "/panel";
     public const string WebsiteUrl = "https://tweakslab.fr";
