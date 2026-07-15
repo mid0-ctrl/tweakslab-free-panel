@@ -1,43 +1,50 @@
 ---
-description: Isolation stricte — TweaksLab Panel Neuf (Community, local uniquement)
+description: Règle n°1 — isolation totale du Free Panel (aucune source externe TweaksLab)
 alwaysApply: true
 ---
 
-# TweaksLab Panel Neuf — isolation stricte
+# TweaksLab Free Panel — RÈGLE N°1 (non négociable)
 
-Ce projet a été construit **ici, en local**, à partir de maquettes / screenshots. Il doit rester **100 % autonome**.
+Ce projet (`tweakslab-panel-neuf`) est **100 % autonome**. Construit localement à partir de **captures d’écran** (design uniquement) + code écrit **ici**.
 
-## Règle directrice (non négociable)
+## Interdit — TOUJOURS
 
-**NE JAMAIS** prendre, copier, importer ou lire quoi que ce soit **en dehors de ce dépôt** (`tweakslab-panel-neuf/`) :
+**Ne JAMAIS** prendre, lire, copier, importer ou fusionner depuis :
 
-- aucun dossier entier
-- aucun fichier source, asset, config ou snippet
-- aucune logique « empruntée » depuis un autre repo du disque
+- `tweakslab-client-csharp`, `tweakslab-installer-csharp`, `tweakslab-bot`, `tweakslab-server`, `tweakslab-server-v2`, ou tout autre repo TweaksLab
+- un autre dossier du disque, une autre conversation, un autre workspace Cursor
+- un `git clone`, `git merge`, `git submodule`, ou remote secondaire vers un autre repo
 
-Si une fonctionnalité manque : **l’implémenter ici**, pas aller chercher ailleurs.
+**Ne JAMAIS** ajouter depuis le client premium : auth, licence, HWID, Stripe, Supabase, logique serveur interne, secrets.
 
-## Interdit explicitement
+**Ne JAMAIS** committer : tokens, `.env`, clés API, chemins perso.
 
-- `tweakslab-client-csharp`, `tweakslab-free-panel`, `tweakslab-server`, `TweaksLab/`, ou tout autre projet voisin
-- auth, licence, HWID, Stripe, Supabase, logique premium / serveur interne
-- secrets, tokens, chemins perso, `.env`
+Si une fonctionnalité manque → **l’implémenter ici**, pas aller chercher ailleurs.
 
-## Autorisé (réseau)
+## Autorisé
 
-Uniquement via `Core/PanelEndpoints.cs` :
+| Source | OK |
+|--------|-----|
+| Captures dans `screenshots/` | Référence **design** uniquement |
+| NuGet officiel (.NET / WPF) | Dépendances standard |
+| Assets dans `TweaksLabPanel/Assets/` | Ressources du panel |
+| URLs dans `TweaksLabPanel/Core/PanelEndpoints.cs` | Chatbot + MAJ (appels réseau, pas de code importé) |
 
-- `tweakslab-free-panel-updates.onrender.com` (MAJ signées)
-- `tweakslab-bot-production.up.railway.app` (chat `/panel/*`)
+Pas d’URL en dur dans les `.xaml` — centraliser dans `PanelEndpoints.cs`.
 
-Pas d’URL en dur dans les `.xaml`.
+## Git / GitHub
 
-## Publication
+- **Seul repo officiel** : `https://github.com/mid0-ctrl/tweakslab-free-panel`
+- **Un seul** `origin` — pas de submodule
+- Push **uniquement** depuis ce dossier local
+- Pas de push sans demande explicite de l’utilisateur
 
-- Repo GitHub officiel : **`mid0-ctrl/tweakslab-free-panel`** (privé)
-- Pousser **uniquement** ce dossier local — jamais depuis un autre repo TweaksLab
-- Un seul `origin`, pas de submodule, pas de merge externe
+## Avant chaque commit ou push
 
-## Contenu attendu
+1. `git remote -v` → un seul `origin` (tweakslab-free-panel)
+2. Aucun fichier copié depuis un autre projet TweaksLab
+3. Aucun secret dans le diff
 
-Gratuit / Community uniquement : **visuel**, plan d’alimentation, astuces basiques. Rien de confidentiel — le binaire peut être décompilé ou leak.
+## Contenu du panel
+
+Gratuit / Community uniquement. Le binaire peut fuiter — rien de confidentiel.

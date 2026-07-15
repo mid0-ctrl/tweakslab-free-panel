@@ -1,15 +1,18 @@
 # TweaksLab Free Panel
 
-Panel Community gratuit (WPF / .NET 8), construit localement à partir de maquettes.
+Panel Community gratuit (WPF / .NET 8), construit localement à partir de maquettes (captures d’écran = **design uniquement**).
 
-## Isolation
+## Règle n°1 — isolation
 
-Ce dépôt est **autonome**. Aucun code importé depuis `tweakslab-client-csharp`, `tweakslab-server`, `tweakslab-bot` ou tout autre repo TweaksLab.
+Ce dépôt est **autonome**. Tout le code a été **créé ici**.
 
-Connexions réseau autorisées (voir `TweaksLabPanel/Core/PanelEndpoints.cs`) :
+**Interdit :** importer du code depuis `tweakslab-client-csharp`, `tweakslab-server`, `tweakslab-bot`, `tweakslab-installer-csharp` ou tout autre repo TweaksLab.
 
-- Mises à jour signées
-- Chatbot `/panel`
+**Autorisé :** NuGet .NET, assets du panel, URLs publiques dans `TweaksLabPanel/Core/PanelEndpoints.cs` (chatbot + MAJ).
+
+**Repo GitHub officiel :** [mid0-ctrl/tweakslab-free-panel](https://github.com/mid0-ctrl/tweakslab-free-panel) — un seul `origin`, pas de submodule.
+
+Voir aussi `AGENTS.md` et `.cursor/rules/free-panel.mdc`.
 
 ## Lancer en local
 

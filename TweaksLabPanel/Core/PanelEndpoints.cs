@@ -1,3 +1,5 @@
+// URLs réseau autorisées du Free Panel — seul point central (pas d'URL en dur dans les .xaml).
+// Règle n°1 : aucun code importé depuis un autre repo TweaksLab ; ces constantes sont des appels HTTP, pas du code copié.
 namespace TweaksLabPanel.Core;
 
 public static class PanelEndpoints

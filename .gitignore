@@ -46,4 +46,5 @@ Desktop.ini
 
 # Publish output
 publish/
+dist/
 *.pubxml.user
