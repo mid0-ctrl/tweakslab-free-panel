@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\TweaksLabPanel\Services\WindowsAppearanceService.cs" Link="WindowsAppearanceService.cs" />
+    <Compile Include="..\..\TweaksLabPanel\Core\WindowsAppearanceState.cs" Link="WindowsAppearanceState.cs" />
+    <Compile Include="..\..\TweaksLabPanel\Core\DiagnosticLog.cs" Link="DiagnosticLog.cs" />
+  </ItemGroup>
+</Project>

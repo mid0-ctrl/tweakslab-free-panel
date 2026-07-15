@@ -1,0 +1,322 @@
+<UserControl x:Class="TweaksLabPanel.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource AppFont}">
+    <Grid>
+        <Grid Margin="{StaticResource PageMargin}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- En-tête -->
+            <StackPanel x:Name="OnboardingWelcomeHeader" Grid.Row="0" Margin="0,12,0,14" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock x:Name="WelcomeGreeting" Text="Bonjour," FontSize="{StaticResource FontDisplay}" FontWeight="Bold" LineHeight="36" Foreground="{StaticResource TextWhiteBrush}"/>
+                    <TextBlock x:Name="WelcomePseudo" Text="" Margin="11,0,0,0" FontSize="{StaticResource FontDisplay}" FontWeight="Bold" LineHeight="36" Foreground="{StaticResource AccentIndigoBrush}"/>
+                </StackPanel>
+                <TextBlock Text="Bienvenue sur le Tweaks Lab Community" Margin="0,-6,0,0" HorizontalAlignment="Center"
+                           FontSize="{StaticResource FontMedium}" Foreground="{StaticResource TextLightGrayBrush}"/>
+                <TextBlock x:Name="StreakText" Margin="0,6,0,0" HorizontalAlignment="Center"
+                           FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- Contenu -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <!-- Bannière -->
+                    <Border Style="{StaticResource GlassCard}" Cursor="Hand"
+                            MouseLeftButtonUp="ReadyBanner_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="28" Height="28" VerticalAlignment="Center">
+                                <Ellipse Stroke="{StaticResource AccentIndigoSoftBrush}" StrokeThickness="2"/>
+                                <TextBlock Text="&#xE945;" FontFamily="{StaticResource IconFont}" FontSize="14"
+                                           Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="PC est prêt à être optimisé" FontSize="{StaticResource FontMedium}" FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Fonds d'écran -->
+                    <Border x:Name="OnboardingWallpapers" Style="{StaticResource GlassCard}" Margin="0,12,0,0" Cursor="Hand"
+                            MouseLeftButtonUp="WallpaperBubble_Click">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="Fonds d'écran" Style="{StaticResource CardTitle}"/>
+                                <TextBlock x:Name="VoirToutLink" Text="Voir tout" Style="{StaticResource AccentLink}"
+                                           HorizontalAlignment="Right" IsHitTestVisible="False"/>
+                            </Grid>
+                            <Grid x:Name="WpCarouselHost" Height="118" Margin="0,10,0,0" HorizontalAlignment="Center" Width="400"
+                                  MouseEnter="WpCarousel_MouseEnter" MouseLeave="WpCarousel_MouseLeave">
+                                <Border x:Name="WpLeftFrame" Width="136" Height="84" CornerRadius="22" Opacity="0.5"
+                                        BorderThickness="0"
+                                        ClipToBounds="True" Panel.ZIndex="0"
+                                        RenderTransformOrigin="0.5,0.5"
+                                        IsHitTestVisible="False">
+                                    <Border.Clip>
+                                        <RectangleGeometry Rect="0,0,136,84" RadiusX="22" RadiusY="22"/>
+                                    </Border.Clip>
+                                    <Border.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform x:Name="WpLeftScale" ScaleX="0.88" ScaleY="0.88"/>
+                                            <TranslateTransform X="-108"/>
+                                        </TransformGroup>
+                                    </Border.RenderTransform>
+                                    <Image x:Name="WpLeft" Stretch="UniformToFill"/>
+                                </Border>
+                                <Border x:Name="WpRightFrame" Width="136" Height="84" CornerRadius="22" Opacity="0.5"
+                                        BorderThickness="0"
+                                        ClipToBounds="True" Panel.ZIndex="0"
+                                        RenderTransformOrigin="0.5,0.5"
+                                        IsHitTestVisible="False">
+                                    <Border.Clip>
+                                        <RectangleGeometry Rect="0,0,136,84" RadiusX="22" RadiusY="22"/>
+                                    </Border.Clip>
+                                    <Border.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform x:Name="WpRightScale" ScaleX="0.88" ScaleY="0.88"/>
+                                            <TranslateTransform X="108"/>
+                                        </TransformGroup>
+                                    </Border.RenderTransform>
+                                    <Image x:Name="WpRight" Stretch="UniformToFill"/>
+                                </Border>
+                                <Border x:Name="WpCenterFrame" Width="188" Height="112" CornerRadius="24"
+                                        Panel.ZIndex="2" ClipToBounds="True"
+                                        BorderThickness="0"
+                                        RenderTransformOrigin="0.5,0.5"
+                                        IsHitTestVisible="False">
+                                    <Border.Clip>
+                                        <RectangleGeometry Rect="0,0,188,112" RadiusX="24" RadiusY="24"/>
+                                    </Border.Clip>
+                                    <Border.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform x:Name="WpCenterScale" ScaleX="1" ScaleY="1"/>
+                                            <TranslateTransform x:Name="WpCenterTranslate" X="0"/>
+                                        </TransformGroup>
+                                    </Border.RenderTransform>
+                                    <Image x:Name="WpCenter" Stretch="UniformToFill"/>
+                                </Border>
+                            </Grid>
+                            <StackPanel x:Name="WpDots" Orientation="Horizontal" HorizontalAlignment="Center"
+                                        Margin="0,8,0,0" IsHitTestVisible="False"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- News row -->
+                    <Grid Margin="0,12,0,56">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Style="{StaticResource GlassCard}" Padding="14,10">
+                            <StackPanel>
+                                <Grid>
+                                    <TextBlock Text="News du jour" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}"/>
+                                    <TextBlock Text="12 juil." HorizontalAlignment="Right" FontSize="11" Foreground="{StaticResource TextDimBrush}"/>
+                                </Grid>
+                                <TextBlock Text="Parmi les premiers" Margin="0,6,0,0" FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextWhiteBrush}"/>
+                                <TextBlock Text="Merci d'être là. Profite du panel, pensé pour la communauté TweaksLab."
+                                           Margin="0,3,0,0" TextWrapping="Wrap" FontSize="11" LineHeight="14"
+                                           Foreground="{StaticResource TextGrayBrush}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border x:Name="OnboardingPersonalize" Grid.Column="2" Style="{StaticResource GlassCard}" Padding="14,10"
+                                Cursor="Hand" MouseLeftButtonUp="PersonalizeBackground_Click">
+                            <StackPanel>
+                                <TextBlock Text="Personnalise ton arrière-plan" FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextWhiteBrush}" TextWrapping="Wrap" LineHeight="15"/>
+                                <Grid x:Name="BgCarouselHost" Height="58" Margin="0,6,0,0" HorizontalAlignment="Center"
+                                      MouseEnter="BgCarousel_MouseEnter" MouseLeave="BgCarousel_MouseLeave">
+                                    <Border x:Name="BgLeftFrame" Width="62" Height="40" CornerRadius="10" Opacity="0.5"
+                                            BorderThickness="0"
+                                            ClipToBounds="True" Cursor="Hand" Panel.ZIndex="0"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            MouseLeftButtonUp="BgCarousel_Click">
+                                        <Border.Clip>
+                                            <RectangleGeometry Rect="0,0,62,40" RadiusX="10" RadiusY="10"/>
+                                        </Border.Clip>
+                                        <Border.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform x:Name="BgLeftScale" ScaleX="0.88" ScaleY="0.88"/>
+                                                <TranslateTransform X="-44"/>
+                                            </TransformGroup>
+                                        </Border.RenderTransform>
+                                        <Image x:Name="BgLeft" Stretch="UniformToFill"/>
+                                    </Border>
+                                    <Border x:Name="BgRightFrame" Width="62" Height="40" CornerRadius="10" Opacity="0.5"
+                                            BorderThickness="0"
+                                            ClipToBounds="True" Cursor="Hand" Panel.ZIndex="0"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            MouseLeftButtonUp="BgCarousel_Click">
+                                        <Border.Clip>
+                                            <RectangleGeometry Rect="0,0,62,40" RadiusX="10" RadiusY="10"/>
+                                        </Border.Clip>
+                                        <Border.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform x:Name="BgRightScale" ScaleX="0.88" ScaleY="0.88"/>
+                                                <TranslateTransform X="44"/>
+                                            </TransformGroup>
+                                        </Border.RenderTransform>
+                                        <Image x:Name="BgRight" Stretch="UniformToFill"/>
+                                    </Border>
+                                    <Border x:Name="BgCenterFrame" Width="88" Height="52" CornerRadius="12"
+                                            Panel.ZIndex="2" ClipToBounds="True" Cursor="Hand"
+                                            BorderThickness="0"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            MouseLeftButtonUp="BgCarousel_Click">
+                                        <Border.Clip>
+                                            <RectangleGeometry Rect="0,0,88,52" RadiusX="12" RadiusY="12"/>
+                                        </Border.Clip>
+                                        <Border.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform x:Name="BgCenterScale" ScaleX="1" ScaleY="1"/>
+                                                <TranslateTransform x:Name="BgCenterTranslate" X="0"/>
+                                            </TransformGroup>
+                                        </Border.RenderTransform>
+                                        <Image x:Name="BgCenter" Stretch="UniformToFill"/>
+                                    </Border>
+                                </Grid>
+                                <StackPanel x:Name="BgDots" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Performances -->
+                <Border x:Name="OnboardingPerformance" Grid.Column="1" Style="{StaticResource GlassCard}" Width="252" Margin="16,0,0,0" VerticalAlignment="Top">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Performances système" Style="{StaticResource CardTitle}"/>
+                                <Border x:Name="PerformanceInfoBadge" Style="{StaticResource InfoBadge}" Margin="6,0,0,0">
+                                    <TextBlock Text="i" FontSize="8" FontWeight="Bold" Foreground="{StaticResource TextWhiteBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </StackPanel>
+
+                            <Border x:Name="PerformanceInfoShowcase" Style="{StaticResource InfoShowcasePanel}" Visibility="Collapsed"
+                                    HorizontalAlignment="Stretch">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="2" Background="{StaticResource AccentBrush}" CornerRadius="1" Margin="0,1,6,1"/>
+                                    <TextBlock x:Name="PerformanceInfoText" Grid.Column="1" TextWrapping="Wrap" FontSize="9" LineHeight="12"
+                                               Foreground="{StaticResource TextWhiteBrush}" Opacity="0.92"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <Grid Grid.Row="1" Width="108" Height="108" HorizontalAlignment="Center" Margin="0,10,0,12">
+                            <Ellipse Stroke="{StaticResource RingTrackBrush}" StrokeThickness="8"/>
+                            <Ellipse x:Name="ScoreRing" Stroke="{StaticResource RingProgressBrush}" StrokeThickness="8"
+                                     StrokeDashCap="Round" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform><RotateTransform Angle="-90"/></Ellipse.RenderTransform>
+                                <Ellipse.Effect><DropShadowEffect Color="#FFFFFF" BlurRadius="10" ShadowDepth="0" Opacity="0.18"/></Ellipse.Effect>
+                            </Ellipse>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-3,0,0">
+                                <TextBlock x:Name="ScoreText" Text="0%" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextWhiteBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="PC prêt à être optimisé" FontSize="9" Foreground="{StaticResource TextWhiteBrush}"
+                                           HorizontalAlignment="Center" Margin="0,2,0,0" TextAlignment="Center"
+                                           TextWrapping="Wrap" Width="88" Cursor="Hand"
+                                           MouseLeftButtonUp="OptimizePc_Click"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Grid.Row="2" Margin="0,2,0,0">
+                            <Grid Margin="0,6,0,6"><TextBlock Text="CPU" Foreground="{StaticResource TextGrayBrush}" FontSize="14"/><TextBlock x:Name="CpuTempText" Text="—" HorizontalAlignment="Right" Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold" FontSize="14"/></Grid>
+                            <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,2"/>
+                            <Grid Margin="0,6,0,6"><TextBlock Text="GPU" Foreground="{StaticResource TextGrayBrush}" FontSize="14"/><TextBlock x:Name="GpuTempText" Text="—" HorizontalAlignment="Right" Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold" FontSize="14"/></Grid>
+                            <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,2"/>
+                            <Grid Margin="0,6,0,6"><TextBlock Text="RAM" Foreground="{StaticResource TextGrayBrush}" FontSize="14"/><TextBlock x:Name="RamUsageText" Text="—" HorizontalAlignment="Right" Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold" FontSize="14"/></Grid>
+                            <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,2"/>
+                            <Grid Margin="0,6,0,6"><TextBlock Text="XMP / EXPO" Foreground="{StaticResource TextGrayBrush}" FontSize="14"/><TextBlock Text="Activé" HorizontalAlignment="Right" Foreground="{StaticResource GreenAccentBrush}" FontWeight="SemiBold" FontSize="14"/></Grid>
+                        </StackPanel>
+
+                        <Button Grid.Row="3" Style="{StaticResource BlueButton}" Content="Discuter avec l'équipe"
+                                Margin="0,10,0,0" HorizontalAlignment="Stretch" Click="DiscussTeam_Click"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Footer avis : stats à gauche, ticker dans l'espace entre les stats et le bord droit -->
+        <Border x:Name="ReviewFooter" VerticalAlignment="Bottom" MinHeight="66"
+                Background="{StaticResource FooterBarBrush}"
+                BorderBrush="{StaticResource FooterBarBorderBrush}" BorderThickness="0,1,0,0"
+                ClipToBounds="True" Panel.ZIndex="4">
+            <Grid ClipToBounds="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center"
+                            Margin="12,10,10,10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Avis" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource SubtleTextBrush}"/>
+                            <Border x:Name="ReviewsInfoBadge" Style="{StaticResource InfoBadge}" Margin="6,0,0,0">
+                                <TextBlock Text="i" FontSize="8" FontWeight="Bold" Foreground="{StaticResource TextWhiteBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </StackPanel>
+                        <Border x:Name="ReviewsInfoShowcase" Style="{StaticResource InfoShowcasePanel}" Visibility="Collapsed"
+                                MaxWidth="300" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="2" Background="{StaticResource AccentBrush}" CornerRadius="1" Margin="0,1,6,1"/>
+                                <TextBlock x:Name="ReviewsInfoText" TextWrapping="Wrap" FontSize="9" LineHeight="12"
+                                           Foreground="{StaticResource TextWhiteBrush}" Opacity="0.92"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Text="+700 avis clients" Margin="10,0,0,0" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource TextLightGrayBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="·" Margin="6,0" FontSize="9" Foreground="{StaticResource SubtleTextBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="+1000 utilisateurs actifs" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource TextLightGrayBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Grid Grid.Column="1" ClipToBounds="True" Margin="0,10,10,10" VerticalAlignment="Center">
+                    <Canvas x:Name="ReviewsTrackCanvas" Height="32" VerticalAlignment="Center"/>
+
+                    <Border HorizontalAlignment="Left" Width="28" IsHitTestVisible="False" Panel.ZIndex="1">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Offset="0" Color="#F8100E16"/>
+                                <GradientStop Offset="1" Color="#00100E16"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <Border HorizontalAlignment="Right" Width="24" IsHitTestVisible="False" Panel.ZIndex="1">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="1,0.5" EndPoint="0,0.5">
+                                <GradientStop Offset="0" Color="#F8100E16"/>
+                                <GradientStop Offset="1" Color="#00100E16"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

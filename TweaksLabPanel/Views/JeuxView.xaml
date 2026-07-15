@@ -1,0 +1,50 @@
+<UserControl x:Class="TweaksLabPanel.Views.JeuxView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource AppFont}">
+    <Grid Margin="{StaticResource PageMargin}">
+        <StackPanel VerticalAlignment="Top">
+            <TextBlock Text="Jeux" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Choisis un jeu à optimiser." Style="{StaticResource PageSubtitle}" Margin="0,0,0,28"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Border Width="200" Height="360" Style="{StaticResource TileCard}" Margin="10" IsHitTestVisible="False" Opacity="0.72">
+                    <Grid>
+                        <Image x:Name="FortniteImg" Stretch="UniformToFill"/>
+                        <Border Background="{StaticResource ScrimBrush}" VerticalAlignment="Bottom" Height="64" CornerRadius="0,0,18,18"/>
+                        <TextBlock Text="Fortnite" Foreground="White" FontWeight="Bold" FontSize="15"
+                                   VerticalAlignment="Bottom" Margin="16,0,0,16"/>
+                        <Border Background="#CC0D0A12" CornerRadius="10" Padding="10,4"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Bientôt" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                        </Border>
+                    </Grid>
+                </Border>
+                <Border Width="200" Height="360" Style="{StaticResource TileCard}" Margin="10" IsHitTestVisible="False" Opacity="0.72">
+                    <Grid>
+                        <Image x:Name="ValorantImg" Stretch="UniformToFill"/>
+                        <Border Background="{StaticResource ScrimBrush}" VerticalAlignment="Bottom" Height="64" CornerRadius="0,0,18,18"/>
+                        <TextBlock Text="Valorant" Foreground="White" FontWeight="Bold" FontSize="15"
+                                   VerticalAlignment="Bottom" Margin="16,0,0,16"/>
+                        <Border Background="#CC0D0A12" CornerRadius="10" Padding="10,4"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Bientôt" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                        </Border>
+                    </Grid>
+                </Border>
+                <Border Width="200" Height="360" Style="{StaticResource TileCard}" Margin="10" IsHitTestVisible="False" Opacity="0.72">
+                    <Grid>
+                        <Image x:Name="CsgoImg" Stretch="UniformToFill"/>
+                        <Border Background="{StaticResource ScrimBrush}" VerticalAlignment="Bottom" Height="64" CornerRadius="0,0,18,18"/>
+                        <TextBlock Text="Counter-Strike" Foreground="White" FontWeight="Bold" FontSize="15"
+                                   VerticalAlignment="Bottom" Margin="16,0,0,16"/>
+                        <Border Background="#CC0D0A12" CornerRadius="10" Padding="10,4"
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Bientôt" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

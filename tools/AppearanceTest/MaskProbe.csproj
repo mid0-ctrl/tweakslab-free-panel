@@ -1,0 +1,68 @@
+using System.Runtime.InteropServices;
+using Microsoft.Win32;
+
+const int SpiSetDragFullWindows = 0x0025;
+const int SpiSetFontSmoothing = 0x004B;
+const int SpiSetFontSmoothingType = 0x200A;
+const int SpiSetUiEffects = 0x103F;
+const int SpiSetClientAreaAnimation = 0x1042;
+const int SpiSetMenuAnimation = 0x1003;
+const int SpiSetComboBoxAnimation = 0x1005;
+const int SpiSetListBoxSmoothScrolling = 0x1007;
+const int SpiSetSelectionFade = 0x1014;
+const int SpiSetTooltipAnimation = 0x1017;
+const int SpiSetTooltipFade = 0x1018;
+const int SpiSetCursorShadow = 0x101B;
+const int SpiFUpdateIniFile = 0x01;
+const int SpiFSendChange = 0x02;
+
+var masks = new Dictionary<string, byte[]> {
+  ["001001"] = [0x00,0x10,0x01,0,0,0,0,0],
+  ["9012038010"] = [0x90,0x12,0x03,0x80,0x10,0,0,0],
+};
+
+foreach (var kv in masks) {
+  Apply(kv.Value);
+  Print(kv.Key);
+}
+
+static void Apply(byte[] mask) {
+  var fx=@"Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects";
+  var adv=@"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
+  var desk=@"Control Panel\Desktop";
+  using var k1=Registry.CurrentUser.CreateSubKey(fx,true);
+  using var k2=Registry.CurrentUser.CreateSubKey(adv,true);
+  using var k3=Registry.CurrentUser.CreateSubKey(desk,true);
+  k1?.SetValue("VisualFXSetting",3);
+  k2?.SetValue("ListviewAlphaSelect",0);
+  k2?.SetValue("ListviewShadow",0);
+  k2?.SetValue("TaskbarAnimations",0);
+  k2?.SetValue("DisablePreviewDesktop",1);
+  k2?.SetValue("ListviewSmoothScrolling",0);
+  k2?.SetValue("DisableThumbnails",0);
+  k3?.SetValue("DragFullWindows","1");
+  k3?.SetValue("FontSmoothing","2");
+  k3?.SetValue("FontSmoothingType",2);
+  k3?.SetValue("MinAnimate","0");
+  foreach(var s in new[]{SpiSetUiEffects,SpiSetClientAreaAnimation,SpiSetMenuAnimation,SpiSetComboBoxAnimation,SpiSetListBoxSmoothScrolling,SpiSetSelectionFade,SpiSetTooltipAnimation,SpiSetTooltipFade,SpiSetCursorShadow}) Set(s,0);
+  Set(SpiSetDragFullWindows,1); Set(SpiSetFontSmoothing,2); Set(SpiSetFontSmoothingType,2);
+  k3?.SetValue("UserPreferencesMask",mask);
+  System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo{FileName="rundll32.exe",Arguments="user32.dll,UpdatePerUserSystemParameters",UseShellExecute=false,CreateNoWindow=true})?.WaitForExit(2000);
+}
+
+static void Set(int a,int v){var p=v; SystemParametersInfo(a,v,ref p,SpiFUpdateIniFile|SpiFSendChange);} 
+
+static void Print(string name) {
+  using var adv=Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced");
+  using var desk=Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop");
+  var mask=(byte[])desk!.GetValue("UserPreferencesMask")!;
+  ulong val=0; for(int i=0;i<8;i++) val |= (ulong)mask[i]<<(8*i);
+  bool H(ulong b)=> (val&b)==b;
+  var checks = new[]{("miniatures",H(0x10000)),("contenu",ReadString(desk,"DragFullWindows")=="1"),("lisser",ReadString(desk,"FontSmoothing")=="2"),("controles",H(0x02)),("peek",ReadInt(adv!,"DisablePreviewDesktop")==0),("ombres",H(0x400)),("anim barre",ReadInt(adv!,"TaskbarAnimations")==1)};
+  Console.WriteLine(name+" mask="+BitConverter.ToString(mask));
+  foreach(var c in checks) Console.WriteLine($" {(c.Item2?"[x]":"[ ]")} {c.Item1}");
+  Console.WriteLine();
+}
+static int ReadInt(RegistryKey k,string n)=>k.GetValue(n) is int i?i:-1;
+static string ReadString(RegistryKey k,string n)=>k.GetValue(n)?.ToString()??"";
+[DllImport("user32.dll",EntryPoint="SystemParametersInfoW")] static extern bool SystemParametersInfo(int a,int b,ref int c,int d);

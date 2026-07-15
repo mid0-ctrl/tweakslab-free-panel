@@ -1,0 +1,30 @@
+<UserControl x:Class="TweaksLabPanel.Views.ReinstallationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource AppFont}">
+    <Grid Margin="{StaticResource PageMargin}">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="520">
+            <TextBlock Text="Tweaks Lab Installer" Style="{StaticResource PageTitle}" HorizontalAlignment="Center"/>
+            <TextBlock Text="Lance l'assistant d'installation pour préparer une clé bootable et réinstaller un Windows optimisé pour la performance."
+                       Style="{StaticResource PageSubtitle}" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,28"/>
+
+            <Border Style="{StaticResource GlassCard}" Margin="0,0,0,20">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE896;" FontFamily="{StaticResource IconFont}" FontSize="32"
+                               Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Style="{StaticResource PlaceholderBody}"
+                               Text="Prépare une clé USB bootable et installe une version Windows optimisée pour les performances."/>
+                </StackPanel>
+            </Border>
+
+            <Button Style="{StaticResource OutlineButton}" HorizontalAlignment="Center" MinWidth="300" Margin="0,0,0,10"
+                    Click="LaunchInstaller_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE896;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                               Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="Lancer l'installateur" Foreground="White"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

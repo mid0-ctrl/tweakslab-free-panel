@@ -1,0 +1,327 @@
+<UserControl x:Class="TweaksLabPanel.Views.ProfilView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource AppFont}">
+    <ScrollViewer x:Name="PageScroll" Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
+        <ScrollViewer.Resources>
+            <Style TargetType="ScrollBar" BasedOn="{StaticResource SidebarScrollBar}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=PageScroll}" Value="True">
+                        <Setter Property="Opacity" Value="0.7"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ScrollViewer.Resources>
+        <StackPanel x:Name="OnboardingProfilContent">
+            <TextBlock Text="Profil" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Personnalise ton profil : pseudo, photo et jeux favoris."
+                       Style="{StaticResource PageSubtitle}" Margin="0,0,0,18"/>
+
+            <!-- Identité -->
+            <Border x:Name="OnboardingProfileCard" Style="{StaticResource GlassCard}" Padding="24,20" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="TON IDENTITÉ" Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                    <StackPanel x:Name="OnboardingProfileIdentity" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,12">
+                        <TextBlock x:Name="NameText" Text="" Foreground="{StaticResource TextWhiteBrush}"
+                                   FontWeight="Bold" FontSize="22" VerticalAlignment="Center"/>
+                        <TextBox x:Name="PseudoBox" Visibility="Collapsed" MaxLength="24" MinWidth="160"
+                                 FontWeight="Bold" FontSize="22" Foreground="{StaticResource TextWhiteBrush}"
+                                 Background="{StaticResource GlassSurfaceLightBrush}" BorderBrush="{StaticResource PurpleAccentBrush}" BorderThickness="2"
+                                 CaretBrush="White" Padding="12,8"
+                                 VerticalAlignment="Center" TextAlignment="Center"
+                                 LostFocus="PseudoBox_LostFocus" KeyDown="PseudoBox_KeyDown"/>
+                        <Border x:Name="EditNameIcon" Cursor="Hand" VerticalAlignment="Center"
+                                Margin="10,0,0,0" Padding="4" Background="Transparent"
+                                MouseLeftButtonUp="EditName_Click" ToolTip="Modifier le pseudo">
+                            <TextBlock Text="&#xE70F;" FontFamily="{StaticResource IconFont}" FontSize="17"
+                                       Foreground="{StaticResource TextWhiteBrush}" Opacity="0.85"/>
+                        </Border>
+                    </StackPanel>
+
+                    <TextBlock Text="Bio (20 caractères max)" Foreground="{StaticResource TextGrayBrush}"
+                               FontSize="11" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBox x:Name="BioBox" MaxLength="20" Width="240" HorizontalAlignment="Center"
+                             FontSize="12" Foreground="{StaticResource TextWhiteBrush}"
+                             Background="{StaticResource GlassSurfaceLightBrush}"
+                             BorderBrush="{StaticResource BorderLightBrush}" BorderThickness="1"
+                             CaretBrush="White" Padding="10,6" TextAlignment="Center"
+                             TextChanged="BioBox_TextChanged" Margin="0,0,0,14"/>
+
+                    <Button Style="{StaticResource SecondaryButton}" HorizontalAlignment="Center" Margin="0,0,0,18"
+                            Click="ImportAvatar_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8B5;" FontFamily="{StaticResource IconFont}" FontSize="14"
+                                       Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="Importer ma photo de profil" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Border Style="{StaticResource InnerGlassPanel}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid x:Name="MainAvatarHost" Grid.Column="0" Width="92" Height="92"
+                                  Margin="0,4,20,0" VerticalAlignment="Top">
+                                <Ellipse Width="92" Height="92"
+                                         Stroke="Black"
+                                         StrokeThickness="2" Fill="Transparent"/>
+                                <Grid x:Name="MainAvatarClipHost" Width="86" Height="86"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Image x:Name="MainAvatarImage" Stretch="UniformToFill"
+                                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                    <TextBlock x:Name="AvatarInitial" Text="S" Foreground="White" FontSize="38" FontWeight="Bold"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Grid>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                                <TextBlock Text="Photos de profil" Foreground="{StaticResource TextWhiteBrush}"
+                                           FontWeight="SemiBold" FontSize="13" Margin="0,0,0,4"/>
+                                <TextBlock Text="Choisis un avatar dans la grille ci-dessous"
+                                           Foreground="{StaticResource TextGrayBrush}" FontSize="11" Margin="0,0,0,12"/>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Grid x:Name="AvSlot1" Tag="avatar-01.png" Width="42" Height="42"
+                                          Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot1Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="2.5" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot1Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar1" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid x:Name="AvSlot2" Tag="avatar-02.png" Width="42" Height="42"
+                                          Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot2Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot2Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar2" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid x:Name="AvSlot3" Tag="avatar-03.png" Width="42" Height="42"
+                                          Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot3Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot3Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar3" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid x:Name="AvSlot4" Tag="avatar-04.png" Width="42" Height="42"
+                                          Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot4Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot4Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar4" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid x:Name="AvSlot5" Tag="avatar-05.png" Width="42" Height="42"
+                                          Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot5Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot5Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar5" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid x:Name="AvSlot6" Tag="avatar-06.png" Width="42" Height="42"
+                                          Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot6Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot6Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar6" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid x:Name="AvSlot7" Tag="avatar-07.png" Width="42" Height="42"
+                                          Margin="0,0,8,0" Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot7Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot7Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar7" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid x:Name="AvSlot8" Tag="avatar-08.png" Width="42" Height="42"
+                                          Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                        <Ellipse x:Name="AvSlot8Ring" Width="42" Height="42"
+                                                 Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                        <Grid x:Name="AvSlot8Clip" Width="38" Height="38"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image x:Name="Avatar8" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Grid>
+                                </StackPanel>
+                                <Grid x:Name="AvSlot9" Tag="avatar-09.png" Width="42" Height="42"
+                                      Margin="0,8,0,0" HorizontalAlignment="Left"
+                                      Cursor="Hand" MouseLeftButtonUp="AvatarSlot_Click">
+                                    <Ellipse x:Name="AvSlot9Ring" Width="42" Height="42"
+                                             Stroke="Black" StrokeThickness="0" Fill="Transparent"/>
+                                    <Grid x:Name="AvSlot9Clip" Width="38" Height="38"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Image x:Name="Avatar9" Stretch="UniformToFill"/>
+                                    </Grid>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Jeux favoris -->
+            <Border Style="{StaticResource GlassCard}" Padding="28,20" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="JEUX FAVORIS" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Clique sur un jeu pour l'ajouter à tes favoris."
+                               Foreground="{StaticResource TextGrayBrush}" FontSize="12" Margin="0,0,0,14"/>
+                        <UniformGrid Columns="3">
+                        <Border x:Name="GameFortniteTile" Tag="fortnite" Margin="0,0,6,0" Height="88"
+                                Style="{StaticResource ThemePreviewTile}"
+                                MouseLeftButtonUp="FavoriteGame_Click">
+                            <Grid>
+                                <Image x:Name="GameFortnite" Stretch="UniformToFill"/>
+                                <Border x:Name="GameFortniteCheck" Width="22" Height="22" CornerRadius="11"
+                                        Background="{StaticResource PurpleAccentBrush}" Visibility="Collapsed"
+                                        VerticalAlignment="Top" HorizontalAlignment="Right" Margin="8">
+                                    <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                               Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <Border x:Name="GameValorantTile" Tag="valorant" Margin="3,0" Height="88"
+                                Style="{StaticResource ThemePreviewTile}"
+                                MouseLeftButtonUp="FavoriteGame_Click">
+                            <Grid>
+                                <Image x:Name="GameValorant" Stretch="UniformToFill"/>
+                                <Border x:Name="GameValorantCheck" Width="22" Height="22" CornerRadius="11"
+                                        Background="{StaticResource PurpleAccentBrush}" Visibility="Collapsed"
+                                        VerticalAlignment="Top" HorizontalAlignment="Right" Margin="8">
+                                    <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                               Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <Border x:Name="GameCsgoTile" Tag="csgo" Margin="6,0,0,0" Height="88"
+                                Style="{StaticResource ThemePreviewTile}"
+                                MouseLeftButtonUp="FavoriteGame_Click">
+                            <Grid>
+                                <Image x:Name="GameCsgo" Stretch="UniformToFill"/>
+                                <Border x:Name="GameCsgoCheck" Width="22" Height="22" CornerRadius="11"
+                                        Background="{StaticResource PurpleAccentBrush}" Visibility="Collapsed"
+                                        VerticalAlignment="Top" HorizontalAlignment="Right" Margin="8">
+                                    <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                               Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- Apparence + Fonds d'écran -->
+            <StackPanel x:Name="PersonalizationSection">
+                <Border Style="{StaticResource GlassCard}" Padding="28,24" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="APPARENCE" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                        <TextBlock Text="Fais défiler le carrousel pour parcourir tes fonds, ou ouvre toute la bibliothèque."
+                                   Foreground="{StaticResource TextGrayBrush}" FontSize="12" Margin="0,0,0,18"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Background="#33A855F7" CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
+                                <TextBlock Text="Aperçu" FontSize="10" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextWhiteBrush}"/>
+                            </Border>
+                            <TextBlock x:Name="BackgroundWalletCount" Text=""
+                                       FontSize="10" Foreground="{StaticResource TextDimBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Grid Height="96" ClipToBounds="False" Margin="0,4,0,12">
+                            <ScrollViewer x:Name="BackgroundWalletScroll"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Disabled"
+                                          Focusable="False" IsTabStop="False" FocusVisualStyle="{x:Null}"
+                                          Background="Transparent"
+                                          ClipToBounds="False"
+                                          PanningMode="HorizontalOnly"
+                                          PreviewMouseWheel="BackgroundWalletScroll_PreviewMouseWheel">
+                                <StackPanel x:Name="BackgroundWallet"
+                                            Orientation="Horizontal"
+                                            VerticalAlignment="Center"
+                                            Margin="2,10,2,6"/>
+                            </ScrollViewer>
+
+                            <Border Width="36" HorizontalAlignment="Left" IsHitTestVisible="False">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop Color="#F01A1524" Offset="0"/>
+                                        <GradientStop Color="#001A1524" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                            <Border Width="36" HorizontalAlignment="Right" IsHitTestVisible="False">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="1,0.5" EndPoint="0,0.5">
+                                        <GradientStop Color="#F01A1524" Offset="0"/>
+                                        <GradientStop Color="#001A1524" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                        </Grid>
+
+                        <Button x:Name="OpenLibraryHitArea" Style="{StaticResource GlassCardButton}"
+                                HorizontalAlignment="Center" Margin="0,18,0,4"
+                                Panel.ZIndex="10" Click="OpenBackgroundLibrary_Click">
+                            <TextBlock Text="Ouvrir toute la bibliothèque"
+                                       Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold"/>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource GlassCard}" Padding="28,20" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="FONDS D'ÉCRAN" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                        <TextBlock Text="Applique un fond sur ton bureau Windows — aperçu gaming ou ouvre toute la bibliothèque."
+                                   Foreground="{StaticResource TextGrayBrush}" FontSize="12" TextWrapping="Wrap"
+                                   Margin="0,0,0,14"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Border Background="#33A855F7" CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
+                                <TextBlock Text="Gaming" FontSize="10" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextWhiteBrush}"/>
+                            </Border>
+                            <TextBlock x:Name="WallpaperCountText" Text=""
+                                       FontSize="10" Foreground="{StaticResource TextDimBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <UniformGrid x:Name="WallpaperGrid" Columns="5" Margin="0,0,0,12"/>
+
+                        <Button x:Name="OpenWallpaperLibraryHitArea" Style="{StaticResource GlassCardButton}"
+                                HorizontalAlignment="Center" Margin="0,4,0,0"
+                                Click="OpenWallpaperLibrary_Click">
+                            <TextBlock Text="Ouvrir toute la bibliothèque"
+                                       Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold"/>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Pied de page -->
+            <Grid Margin="0,16,0,8">
+                <TextBlock Text="Membre depuis 12 juillet 2026" Foreground="{StaticResource TextGrayBrush}"
+                           FontSize="12" VerticalAlignment="Center"/>
+                <Button Style="{StaticResource SaveButton}" HorizontalAlignment="Right">
+                    <TextBlock Text="Enregistrer les modifications" Foreground="White" FontSize="13"/>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

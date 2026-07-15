@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+    <AssemblyName>TweaksLabPanel</AssemblyName>
+    <RootNamespace>TweaksLabPanel</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\**\*" Exclude="Assets\fonts\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Assets\fonts\*.ttf" />
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\logo-tetsuya.png" />
+    <Resource Include="Assets\Wallpapers\*.png" />
+    <Resource Include="Assets\social\*.png" />
+    <Resource Include="Assets\games\*.png" />
+    <Resource Include="Assets\apps\*.png" />
+    <Resource Include="Assets\Backgrounds\*.png" />
+    <Resource Include="Assets\Avatars\*.png" />
+    <Resource Include="Assets\assistant-bryan.png" />
+  </ItemGroup>
+
+</Project>

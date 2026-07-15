@@ -1,0 +1,102 @@
+<UserControl x:Class="TweaksLabPanel.Views.ParametresView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource AppFont}">
+    <ScrollViewer Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
+        <StackPanel MaxWidth="860" HorizontalAlignment="Center">
+            <TextBlock Text="Paramètres" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Configure ton affichage et personnalise ton bureau." Style="{StaticResource PageSubtitle}" Margin="0,0,0,24"/>
+
+            <Border Style="{StaticResource GlassCard}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="AFFICHAGE" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="Mode actuel" Style="{StaticResource FieldLabel}"/>
+                    <Border Style="{StaticResource ReadOnlyField}" Margin="0,0,0,14">
+                        <TextBlock x:Name="CurrentModeText" Foreground="{StaticResource TextWhiteBrush}" FontSize="13"/>
+                    </Border>
+                    <TextBlock Text="Résolution" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="ResolutionCombo" Margin="0,0,0,14" Padding="10,8"
+                              SelectionChanged="ResolutionCombo_SelectionChanged"/>
+                    <TextBlock Text="Fréquence de rafraîchissement" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="RefreshCombo" Margin="0,0,0,14" Padding="10,8"/>
+                    <Button Style="{StaticResource OutlineButton}" Content="Appliquer" HorizontalAlignment="Left" Padding="20,10"
+                            Click="ApplyDisplay_Click"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource GlassCard}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="PRÉFÉRENCES" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="Langue" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="LanguageCombo" Margin="0,0,0,14" Padding="10,8"
+                              SelectionChanged="LanguageCombo_SelectionChanged">
+                        <ComboBoxItem Content="Français"/>
+                        <ComboBoxItem Content="English"/>
+                    </ComboBox>
+                    <TextBlock Text="Disposition clavier" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox x:Name="KeyboardCombo" Padding="10,8"
+                              SelectionChanged="KeyboardCombo_SelectionChanged">
+                        <ComboBoxItem Content="AZERTY"/>
+                        <ComboBoxItem Content="QWERTY"/>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource GlassCard}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock x:Name="BiosSectionTitle" Text="BIOS / FIRMWARE" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock x:Name="BiosSectionHint" Text="Vérifie si TPM, Secure Boot et XMP/EXPO sont activés sur ton PC."
+                               Foreground="{StaticResource TextGrayBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,14"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <TextBlock x:Name="TpmLabelText" Text="TPM 2.0" Foreground="{StaticResource TextGrayBrush}" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TpmStatusText" Text="—" HorizontalAlignment="Right" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center"/>
+                    </Grid>
+                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <TextBlock x:Name="SecureBootLabelText" Text="Secure Boot" Foreground="{StaticResource TextGrayBrush}" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="SecureBootStatusText" Text="—" HorizontalAlignment="Right" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center"/>
+                    </Grid>
+                    <Rectangle Height="1" Fill="{StaticResource BorderBrush}" Margin="0,0,0,10"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <TextBlock x:Name="XmpLabelText" Text="XMP / EXPO" Foreground="{StaticResource TextGrayBrush}" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="XmpStatusText" Text="—" HorizontalAlignment="Right" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center"/>
+                    </Grid>
+                    <TextBlock x:Name="XmpTutorialLink" Text="Tuto activer XMP"
+                               Foreground="{StaticResource AccentBrush}" FontSize="12" FontWeight="SemiBold"
+                               TextDecorations="Underline" Cursor="Hand" Margin="0,0,0,16"
+                               Visibility="Collapsed" MouseLeftButtonUp="XmpTutorialLink_Click"/>
+
+                    <Button x:Name="RebootBiosBtn" Style="{StaticResource OutlineButton}" Padding="20,10"
+                            HorizontalAlignment="Left" Click="RebootBios_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE7E8;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                       Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="RebootBiosBtnText" Text="Redémarrer dans le BIOS" FontSize="13" Foreground="White" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource GlassCard}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock x:Name="OnboardingSectionTitle" Text="VISITE GUIDÉE" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock x:Name="OnboardingSectionHint"
+                               Text="Relance le tutoriel de première visite avec les zones mises en avant."
+                               Foreground="{StaticResource TextGrayBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,14"/>
+                    <Button x:Name="ReplayOnboardingBtn" Style="{StaticResource OutlineButton}" Padding="20,10"
+                            HorizontalAlignment="Left" Click="ReplayOnboarding_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                       Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="ReplayOnboardingBtnText" Text="Relancer la visite guidée"
+                                       FontSize="13" Foreground="White" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

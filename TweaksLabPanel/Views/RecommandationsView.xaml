@@ -1,0 +1,64 @@
+<UserControl x:Class="TweaksLabPanel.Views.RecommandationsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource AppFont}">
+    <ScrollViewer Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
+        <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+            <TextBlock Text="Nos recommandations" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Pour garder ton PC rapide et stable dans le temps." Style="{StaticResource PageSubtitle}" Margin="0,0,0,24"/>
+
+            <Border Style="{StaticResource GlassCard}">
+                <StackPanel>
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Foreground="{StaticResource TextWhiteBrush}" FontSize="13" TextWrapping="Wrap" LineHeight="22">
+                            <Run Text="● " Foreground="{StaticResource PurpleAccentBrush}"/>
+                            <Run Text="Utiliser uniquement les pilotes recommandés" FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="    Installe uniquement les pilotes que nous recommandons. Évite d'installer d'autres versions ou des logiciels supplémentaires liés aux pilotes." Foreground="{StaticResource MutedTextBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Foreground="{StaticResource TextWhiteBrush}" FontSize="13" TextWrapping="Wrap" LineHeight="22">
+                            <Run Text="● " Foreground="{StaticResource PurpleAccentBrush}"/>
+                            <Run Text="Éviter les scripts ou modifications externes" FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="    N'utilise pas de scripts batch externes, de tweaks non vérifiés ni de modifications du registre Windows non validées." Foreground="{StaticResource MutedTextBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Foreground="{StaticResource TextWhiteBrush}" FontSize="13" TextWrapping="Wrap" LineHeight="22">
+                            <Run Text="● " Foreground="{StaticResource PurpleAccentBrush}"/>
+                            <Run Text="Ne pas utiliser d'autres logiciels d'optimisation" FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="    Les logiciels d'optimisation tiers ne sont pas conseillés : ils peuvent entrer en conflit avec notre optimisation." Foreground="{StaticResource MutedTextBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Foreground="{StaticResource TextWhiteBrush}" FontSize="13" TextWrapping="Wrap" LineHeight="22">
+                            <Run Text="● " Foreground="{StaticResource PurpleAccentBrush}"/>
+                            <Run Text="Installer le minimum de logiciels possible" FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="    Moins tu installes de programmes, plus ton système restera rapide et stable." Foreground="{StaticResource MutedTextBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Foreground="{StaticResource TextWhiteBrush}" FontSize="13" TextWrapping="Wrap" LineHeight="22">
+                            <Run Text="● " Foreground="{StaticResource PurpleAccentBrush}"/>
+                            <Run Text="Éviter les applications inutiles au démarrage" FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="    Trop de programmes qui se lancent au démarrage peuvent ralentir ton PC et provoquer du lag." Foreground="{StaticResource MutedTextBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Foreground="{StaticResource TextWhiteBrush}" FontSize="13" TextWrapping="Wrap" LineHeight="22">
+                            <Run Text="● " Foreground="{StaticResource PurpleAccentBrush}"/>
+                            <Run Text="Garder le système propre" FontWeight="SemiBold"/>
+                            <LineBreak/>
+                            <Run Text="    Désinstalle les programmes inutiles et évite d'accumuler des applications que tu n'utilises pas." Foreground="{StaticResource MutedTextBrush}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

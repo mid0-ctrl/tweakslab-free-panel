@@ -1,0 +1,221 @@
+<UserControl x:Class="TweaksLabPanel.Views.AstucesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource AppFont}">
+    <ScrollViewer x:Name="PageScroll" Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
+            <StackPanel x:Name="OnboardingAstucesContent" MaxWidth="860" HorizontalAlignment="Center">
+            <TextBlock Text="Astuces" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="Optimisations gratuites TweaksLab Community pour tirer le meilleur de ton PC."
+                       Style="{StaticResource PageSubtitle}" Margin="0,0,0,24"/>
+
+            <!-- Plan d'alimentation -->
+            <Border x:Name="OnboardingPowerPlanCard" Style="{StaticResource GlassCard}" Margin="0,0,0,14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Width="52" Height="52" CornerRadius="14"
+                            BorderBrush="#45A855F7" BorderThickness="1" Margin="0,0,16,0" VerticalAlignment="Top">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Offset="0" Color="#332A2150"/>
+                                <GradientStop Offset="1" Color="#22140F26"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <TextBlock Text="&#xE83F;" FontFamily="{StaticResource IconFont}" FontSize="22"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <StackPanel x:Name="OnboardingPowerPlanHeader" Orientation="Horizontal">
+                            <TextBlock Text="Plan d'alimentation TweaksLab Community" FontSize="{StaticResource FontNormal}"
+                                       FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}" VerticalAlignment="Center"/>
+                            <Border x:Name="PowerStatusPill" Margin="10,0,0,0" Padding="8,3" CornerRadius="8"
+                                    BorderBrush="#33FFFFFF" BorderThickness="1" VerticalAlignment="Center">
+                                <Border.Background>
+                                    <SolidColorBrush Color="#221A1622"/>
+                                </Border.Background>
+                                <TextBlock x:Name="PowerStatusText" FontSize="{StaticResource FontSmall}"
+                                           FontWeight="SemiBold" Foreground="{StaticResource TextLightGrayBrush}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock Text="Plan gratuit optimisé pour le gaming. L'installation l'active tout de suite ; la désactivation remet ton plan précédent."
+                                   TextWrapping="Wrap" Margin="0,8,0,0" FontSize="{StaticResource FontSmall}"
+                                   Foreground="{StaticResource TextWhiteBrush}" Opacity="0.88" LineHeight="20"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                            <Button x:Name="InstallPowerPlanButton" Style="{StaticResource SaveButton}"
+                                    MinWidth="170" Click="InstallPowerPlanButton_Click" Content="Installer le plan"/>
+                            <TextBlock x:Name="PowerFeedbackText" Margin="14,0,0,0" VerticalAlignment="Center"
+                                       FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
+                                       Foreground="{StaticResource TextDimBrush}" Visibility="Collapsed"/>
+                        </StackPanel>
+
+                        <Border Margin="0,18,0,0" Padding="14,12" CornerRadius="12"
+                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="#1A141022">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Activer le plan" FontWeight="SemiBold"
+                                               FontSize="{StaticResource FontNormal}" Foreground="{StaticResource TextWhiteBrush}"/>
+                                    <TextBlock x:Name="PowerToggleHint" Margin="0,4,0,0"
+                                               FontSize="{StaticResource FontSmall}" Foreground="{StaticResource TextDimBrush}"
+                                               TextWrapping="Wrap"
+                                               Text="Bascule vers le plan TweaksLab Community ou revient au plan précédent."/>
+                                </StackPanel>
+                                <ToggleButton x:Name="PowerPlanToggle" Grid.Column="1"
+                                              Style="{StaticResource AccentToggle}" VerticalAlignment="Center"
+                                              Checked="PowerPlanToggle_Checked" Unchecked="PowerPlanToggle_Unchecked"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Apparence Windows -->
+            <Border Style="{StaticResource GlassCard}" Margin="0,0,0,14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Width="52" Height="52" CornerRadius="14"
+                            BorderBrush="#45A855F7" BorderThickness="1" Margin="0,0,16,0" VerticalAlignment="Top">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Offset="0" Color="#332A2150"/>
+                                <GradientStop Offset="1" Color="#22140F26"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <TextBlock Text="&#xE771;" FontFamily="{StaticResource IconFont}" FontSize="22"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Optimiser l'apparence de Windows" FontSize="{StaticResource FontNormal}"
+                                       FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}" VerticalAlignment="Center"/>
+                            <Border x:Name="AppearanceStatusPill" Margin="10,0,0,0" Padding="8,3" CornerRadius="8"
+                                    BorderBrush="#33FFFFFF" BorderThickness="1" VerticalAlignment="Center">
+                                <Border.Background>
+                                    <SolidColorBrush Color="#221A1622"/>
+                                </Border.Background>
+                                <TextBlock x:Name="AppearanceStatusText" FontSize="{StaticResource FontSmall}"
+                                           FontWeight="SemiBold" Foreground="{StaticResource TextLightGrayBrush}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock Text="Applique le profil TweaksLab des Options de performances (3 cases cochées). Ferme la fenêtre Options de performances avant de basculer, puis rouvre-la pour vérifier."
+                                   TextWrapping="Wrap" Margin="0,8,0,0" FontSize="{StaticResource FontSmall}"
+                                   Foreground="{StaticResource TextWhiteBrush}" Opacity="0.88" LineHeight="20"/>
+
+                        <TextBlock x:Name="AppearanceFeedbackText" Margin="0,14,0,0"
+                                   FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
+                                   Foreground="{StaticResource TextDimBrush}" Visibility="Collapsed"/>
+
+                        <TextBlock x:Name="AppearanceLogHintText" Margin="0,8,0,0"
+                                   FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
+                                   Foreground="{StaticResource TextDimBrush}" Opacity="0.75"/>
+
+                        <Border Margin="0,18,0,0" Padding="14,12" CornerRadius="12"
+                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="#1A141022">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Activer l'optimisation" FontWeight="SemiBold"
+                                               FontSize="{StaticResource FontNormal}" Foreground="{StaticResource TextWhiteBrush}"/>
+                                    <TextBlock Text="Bascule le profil optimisé TweaksLab ou restaure toutes les cases cochées."
+                                               Margin="0,4,0,0" FontSize="{StaticResource FontSmall}"
+                                               Foreground="{StaticResource TextDimBrush}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <ToggleButton x:Name="AppearanceToggle" Grid.Column="1"
+                                              Style="{StaticResource AccentToggle}" VerticalAlignment="Center"
+                                              Checked="AppearanceToggle_Checked" Unchecked="AppearanceToggle_Unchecked"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Applications au démarrage -->
+            <Border Style="{StaticResource GlassCard}">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Width="52" Height="52" CornerRadius="14"
+                                BorderBrush="#45A855F7" BorderThickness="1" Margin="0,0,16,0" VerticalAlignment="Top">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Offset="0" Color="#332A2150"/>
+                                    <GradientStop Offset="1" Color="#22140F26"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="&#xE7B8;" FontFamily="{StaticResource IconFont}" FontSize="22"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Applications au démarrage" FontSize="{StaticResource FontNormal}"
+                                           FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}" VerticalAlignment="Center"/>
+                                <Border Margin="10,0,0,0" Padding="8,3" CornerRadius="8"
+                                        BorderBrush="#33FFFFFF" BorderThickness="1" VerticalAlignment="Center">
+                                    <Border.Background>
+                                        <SolidColorBrush Color="#221A1622"/>
+                                    </Border.Background>
+                                    <TextBlock x:Name="StartupCountText" FontSize="{StaticResource FontSmall}"
+                                               FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"/>
+                                </Border>
+                            </StackPanel>
+
+                            <TextBlock Text="Moins tu as d'applications au démarrage, plus ton PC sera rapide. Désactive celles dont tu n'as pas besoin."
+                                       TextWrapping="Wrap" Margin="0,8,0,0" FontSize="{StaticResource FontSmall}"
+                                       Foreground="{StaticResource TextWhiteBrush}" Opacity="0.88" LineHeight="20"/>
+
+                            <Border Margin="0,14,0,0" Padding="12,10" CornerRadius="12"
+                                    BorderBrush="#44A855F7" BorderThickness="1" Background="#221A141F">
+                                <TextBlock x:Name="StartupAdviceText" TextWrapping="Wrap" FontSize="{StaticResource FontSmall}"
+                                           Foreground="{StaticResource TextWhiteBrush}" LineHeight="20"/>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock x:Name="StartupFeedbackText" Margin="0,14,0,0"
+                               FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
+                               Foreground="{StaticResource TextDimBrush}" Visibility="Collapsed"/>
+
+                    <TextBlock x:Name="StartupEmptyText" Margin="0,18,0,0"
+                               FontSize="{StaticResource FontSmall}"
+                               Foreground="{StaticResource TextDimBrush}" Visibility="Collapsed"
+                               Text="Aucune application détectée au démarrage."/>
+
+                    <Expander x:Name="StartupAppsExpander" Style="{StaticResource GlassExpander}"
+                              Margin="0,18,0,0" IsExpanded="False" Visibility="Collapsed">
+                        <Expander.Header>
+                            <TextBlock x:Name="StartupExpanderTitle" Text="Voir les applications"
+                                       Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold"/>
+                        </Expander.Header>
+                        <StackPanel x:Name="StartupAppsList" Margin="0,10,0,2"/>
+                    </Expander>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,43 @@
+---
+description: Isolation stricte — TweaksLab Panel Neuf (Community, local uniquement)
+alwaysApply: true
+---
+
+# TweaksLab Panel Neuf — isolation stricte
+
+Ce projet a été construit **ici, en local**, à partir de maquettes / screenshots. Il doit rester **100 % autonome**.
+
+## Règle directrice (non négociable)
+
+**NE JAMAIS** prendre, copier, importer ou lire quoi que ce soit **en dehors de ce dépôt** (`tweakslab-panel-neuf/`) :
+
+- aucun dossier entier
+- aucun fichier source, asset, config ou snippet
+- aucune logique « empruntée » depuis un autre repo du disque
+
+Si une fonctionnalité manque : **l’implémenter ici**, pas aller chercher ailleurs.
+
+## Interdit explicitement
+
+- `tweakslab-client-csharp`, `tweakslab-free-panel`, `tweakslab-server`, `TweaksLab/`, ou tout autre projet voisin
+- auth, licence, HWID, Stripe, Supabase, logique premium / serveur interne
+- secrets, tokens, chemins perso, `.env`
+
+## Autorisé (réseau)
+
+Uniquement via `Core/PanelEndpoints.cs` :
+
+- `tweakslab-free-panel-updates.onrender.com` (MAJ signées)
+- `tweakslab-bot-production.up.railway.app` (chat `/panel/*`)
+
+Pas d’URL en dur dans les `.xaml`.
+
+## Publication
+
+- Repo GitHub officiel : **`mid0-ctrl/tweakslab-free-panel`** (privé)
+- Pousser **uniquement** ce dossier local — jamais depuis un autre repo TweaksLab
+- Un seul `origin`, pas de submodule, pas de merge externe
+
+## Contenu attendu
+
+Gratuit / Community uniquement : **visuel**, plan d’alimentation, astuces basiques. Rien de confidentiel — le binaire peut être décompilé ou leak.
