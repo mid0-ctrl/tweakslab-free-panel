@@ -40,9 +40,9 @@ ehthumbs.db
 Desktop.ini
 .DS_Store
 
-# Cursor (keep rules, ignore local cache)
-.cursor/projects/
-.cursor/*.log
+# Cursor & consignes dev (local uniquement, pas publiées)
+.cursor/
+AGENTS.md
 
 # Publish output
 publish/
