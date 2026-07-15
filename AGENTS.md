@@ -13,7 +13,6 @@ Ce dépôt est le **TweaksLab Free Panel**. Il doit rester **100 % autonome**.
 
 ### Autorisé
 
-- **Captures d’écran** (`screenshots/`) → référence design uniquement
 - **Code écrit ici** → C#, XAML, services, vues
 - **NuGet** → packages .NET officiels
 - **URLs** → uniquement via `TweaksLabPanel/Core/PanelEndpoints.cs`

@@ -48,3 +48,6 @@ Desktop.ini
 publish/
 dist/
 *.pubxml.user
+
+# Design refs (local only, not shipped)
+screenshots/

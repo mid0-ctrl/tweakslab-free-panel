@@ -5,7 +5,7 @@ alwaysApply: true
 
 # TweaksLab Free Panel — RÈGLE N°1 (non négociable)
 
-Ce projet (`tweakslab-panel-neuf`) est **100 % autonome**. Construit localement à partir de **captures d’écran** (design uniquement) + code écrit **ici**.
+Ce projet (`tweakslab-panel-neuf`) est **100 % autonome**. Code écrit **ici** uniquement.
 
 ## Interdit — TOUJOURS
 
@@ -25,7 +25,6 @@ Si une fonctionnalité manque → **l’implémenter ici**, pas aller chercher a
 
 | Source | OK |
 |--------|-----|
-| Captures dans `screenshots/` | Référence **design** uniquement |
 | NuGet officiel (.NET / WPF) | Dépendances standard |
 | Assets dans `TweaksLabPanel/Assets/` | Ressources du panel |
 | URLs dans `TweaksLabPanel/Core/PanelEndpoints.cs` | Chatbot + MAJ (appels réseau, pas de code importé) |
