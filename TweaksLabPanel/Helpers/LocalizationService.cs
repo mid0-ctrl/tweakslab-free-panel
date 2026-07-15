@@ -90,10 +90,11 @@ public static class LocalizationService
         "Reviews refreshed every 2 weeks.");
     public static string UpdateAvailableTitle => T("Mise à jour disponible", "Update available");
     public static string UpdateDefaultNotes => T("Une nouvelle version du panel est prête.", "A new panel version is ready.");
-    public static string UpdateDownloading => T("Téléchargement en cours…", "Downloading…");
+    public static string UpdateDownloading => T("Téléchargement automatique en cours…", "Automatic download in progress…");
+    public static string UpdateInstalling => T("Installation automatique…", "Automatic installation…");
     public static string UpdateAvailableMessage(string version, string notes) => IsEnglish
-        ? $"Version {version} is available.\n\n{notes}\n\nInstall now? The panel will restart."
-        : $"La version {version} est disponible.\n\n{notes}\n\nInstaller maintenant ? Le panel va redémarrer.";
+        ? $"Version {version} is available.\n\n{notes}\n\nClick Yes: the panel downloads, installs and restarts by itself. No zip to extract."
+        : $"La version {version} est disponible.\n\n{notes}\n\nClique Oui : le panel télécharge, installe et redémarre tout seul. Aucun zip à extraire.";
     public static string UpdateFailed(string detail) => IsEnglish
         ? $"Update failed.\n\n{detail}"
         : $"Échec de la mise à jour.\n\n{detail}";

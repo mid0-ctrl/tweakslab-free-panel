@@ -600,17 +600,21 @@
     <Style x:Key="ChatBubbleUser" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource AccentSoftBrush}"/>
         <Setter Property="CornerRadius" Value="16"/>
-        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="Padding" Value="12,8"/>
         <Setter Property="BorderBrush" Value="#44A855F7"/>
         <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
     </Style>
 
     <Style x:Key="ChatBubbleBot" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource GlassSurfaceBrush}"/>
         <Setter Property="CornerRadius" Value="16"/>
-        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="Padding" Value="12,8"/>
         <Setter Property="BorderBrush" Value="#22FFFFFF"/>
         <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
     </Style>
 
     <Style x:Key="ChatInputBox" TargetType="TextBox">

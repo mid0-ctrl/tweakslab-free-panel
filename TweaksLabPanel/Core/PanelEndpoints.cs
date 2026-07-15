@@ -7,8 +7,10 @@ public static class PanelEndpoints
     public const string UpdatesBaseUrl = "https://tweakslab-free-panel-updates.onrender.com";
     public const string GitHubLatestReleaseApi =
         "https://api.github.com/repos/mid0-ctrl/tweakslab-free-panel/releases/latest";
-    public const string ChatBaseUrl = "https://tweakslab-bot-production.up.railway.app";
+    public const string ChatBaseUrl = "https://web-production-8a75c4.up.railway.app";
     public const string ChatPanelPath = "/panel";
+    /// <summary>Optionnel — doit correspondre à PANEL_API_KEY sur Railway (filtre spam basique).</summary>
+    public const string PanelChatApiKey = "53cdcf9d02bba08fad7eae6de33eae261c61dc070a9034036af0a236d913c0be";
     public const string WebsiteUrl = "https://tweakslab.fr";
 
     public const string SocialX = "https://x.com/TweaksLab_";

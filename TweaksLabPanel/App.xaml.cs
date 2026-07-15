@@ -20,6 +20,7 @@ public partial class App : Application
 
             AppSettingsStore.Instance.Load();
             UserProfileStore.Instance.Load();
+            TryDeleteLegacyChatHistory();
             EngagementStore.Instance.Load();
             EngagementStore.Instance.RecordAppOpen();
             GpuVendorStore.Instance.Load();
@@ -51,6 +52,23 @@ public partial class App : Application
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
             Shutdown(1);
+        }
+    }
+
+    private static void TryDeleteLegacyChatHistory()
+    {
+        try
+        {
+            var path = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "TweaksLabPanel",
+                "chat-history.json");
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+        catch
+        {
+            // Nettoyage optionnel de l'ancienne persistance chat.
         }
     }
 

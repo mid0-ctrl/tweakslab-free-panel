@@ -17,7 +17,7 @@ git push origin v1.0.1
 ## Côté utilisateur
 
 - Popup « Mise à jour disponible »
-- **Oui** → téléchargement, remplacement des fichiers, redémarrage
+- **Oui** → téléchargement auto, extraction auto, remplacement des fichiers, redémarrage (rien à faire à la main)
 - **Non** → rappel ignoré pour cette version
 
 ## Capacité (~5000 users)
