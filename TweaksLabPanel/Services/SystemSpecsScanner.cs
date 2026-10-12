@@ -1,6 +1,7 @@
 using System.IO;
 using System.Management;
 using TweaksLabPanel.Core;
+using TweaksLabPanel.Helpers;
 
 namespace TweaksLabPanel.Services;
 
@@ -8,7 +9,6 @@ public static class SystemSpecsScanner
 {
     public static SystemSpecsSnapshot Scan()
     {
-        var perf = SystemPerformanceScanner.Scan();
         var os = ReadOperatingSystem();
         var cpu = ReadProcessor();
         var gpu = ReadGraphicsCard();
@@ -25,23 +25,32 @@ public static class SystemSpecsScanner
             Memory: ram,
             Motherboard: board,
             Storage: storage,
-            CpuTempC: perf.CpuTempC,
-            GpuTempC: perf.GpuTempC,
+            CpuTempC: HardwareSensors.ReadCpuTemperatureC(),
+            GpuTempC: HardwareSensors.ReadGpuTemperatureC(),
             SystemDriveFreePercent: drive.FreePercent,
             SystemDriveFreeBytes: drive.FreeBytes,
             SystemDriveTotalBytes: drive.TotalBytes,
             SystemDriveLetter: drive.Letter);
     }
 
-    public static string FormatSpecsText(SystemSpecsSnapshot s) =>
-        $"""
-        Système d'exploitation : {s.OperatingSystem}
-        Processeur : {s.Processor} ({s.ProcessorDetails})
-        Carte graphique : {s.GraphicsCard}
-        Mémoire vive : {s.Memory}
-        Carte mère : {s.Motherboard}
-        Stockage : {s.Storage}
-        """;
+    public static string FormatSpecsText(SystemSpecsSnapshot s)
+    {
+        var osLabel = LocalizationService.T("Système d'exploitation :", "Operating system:");
+        var cpuLabel = LocalizationService.T("Processeur :", "Processor:");
+        var gpuLabel = LocalizationService.T("Carte graphique :", "Graphics card:");
+        var ramLabel = LocalizationService.T("Mémoire vive :", "Memory:");
+        var boardLabel = LocalizationService.T("Carte mère :", "Motherboard:");
+        var storageLabel = LocalizationService.T("Stockage :", "Storage:");
+
+        return $"""
+            {osLabel} {s.OperatingSystem}
+            {cpuLabel} {s.Processor} ({s.ProcessorDetails})
+            {gpuLabel} {s.GraphicsCard}
+            {ramLabel} {s.Memory}
+            {boardLabel} {s.Motherboard}
+            {storageLabel} {s.Storage}
+            """;
+    }
 
     private static string ReadOperatingSystem()
     {
@@ -68,7 +77,7 @@ public static class SystemSpecsScanner
                 "SELECT Name, NumberOfCores, NumberOfLogicalProcessors FROM Win32_Processor");
             foreach (ManagementObject obj in searcher.Get())
             {
-                var name = CleanHardwareName(obj["Name"]?.ToString() ?? "Processeur");
+                var name = CleanHardwareName(obj["Name"]?.ToString() ?? LocalizationService.T("Processeur", "Processor"));
                 var cores = Convert.ToInt32(obj["NumberOfCores"] ?? 0);
                 var threads = Convert.ToInt32(obj["NumberOfLogicalProcessors"] ?? 0);
                 var details = cores > 0 && threads > 0 ? $"{cores}c/{threads}t" : "—";
@@ -77,7 +86,7 @@ public static class SystemSpecsScanner
         }
         catch { }
 
-        return ("Processeur", "—");
+        return (LocalizationService.T("Processeur", "Processor"), "—");
     }
 
     private static string ReadGraphicsCard()
@@ -110,7 +119,7 @@ public static class SystemSpecsScanner
         }
         catch { }
 
-        return "Carte graphique non détectée";
+        return LocalizationService.T("Carte graphique non détectée", "Graphics card not detected");
     }
 
     private static string ReadMemory()
@@ -169,7 +178,7 @@ public static class SystemSpecsScanner
                 "SELECT Model, Size FROM Win32_DiskDrive");
             foreach (ManagementObject obj in searcher.Get())
             {
-                var model = obj["Model"]?.ToString()?.Trim() ?? "Disque";
+                var model = obj["Model"]?.ToString()?.Trim() ?? LocalizationService.T("Disque", "Disk");
                 var sizeBytes = Convert.ToInt64(obj["Size"] ?? 0);
                 if (sizeBytes <= 0)
                     return model;

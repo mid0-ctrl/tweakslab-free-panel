@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using System.IO;
-using System.Management;
-using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using TweaksLabPanel.Core;
 
@@ -9,27 +7,79 @@ namespace TweaksLabPanel.Services;
 
 public static class SystemPerformanceScanner
 {
-    private const double DefaultCpuTempC = 64;
-    private const double DefaultGpuTempC = 58;
-
     public static PerformanceSnapshot Scan()
     {
-        var ram = ReadRamUsage();
-        var cpuTemp = TryReadCpuTemperature() ?? DefaultCpuTempC;
-        var gpuTemp = TryReadGpuTemperature() ?? DefaultGpuTempC;
+        var ram = HardwareSensors.ReadRam();
+        var xmp = BiosFeaturesScanner.ReadXmpState(out var xmpDetail);
+        var refresh = WindowsGamingProbe.ReadRefreshRates();
+        var powerPlan = WindowsGamingProbe.IsPerformancePowerPlanActive(out var powerPlanName);
 
         return new PerformanceSnapshot(
             InstalledAppsCount: CountInstalledApplications(),
-            StartupAppsCount: CountStartupApplications(),
+            StartupAppsCount: CountEnabledStartupApps(),
             RecentErrorCount: CountRecentSystemErrors(),
-            CpuTempC: cpuTemp,
-            GpuTempC: gpuTemp,
+            CpuTempC: HardwareSensors.ReadCpuTemperatureC(),
+            GpuTempC: HardwareSensors.ReadGpuTemperatureC(),
             RamUsedGb: ram.UsedGb,
             RamTotalGb: ram.TotalGb,
-            TempFolderSizeMb: EstimateTempFolderSizeMb(),
-            RunningProcessCount: Process.GetProcesses().Length,
+            TempFolderSizeMb: EstimateJunkSizeMb(),
+            RunningProcessCount: CountRunningProcesses(),
             SystemDriveFreePercent: ReadSystemDriveFreePercent(),
-            ScannedAtUtc: DateTime.UtcNow);
+            Xmp: xmp,
+            XmpDetail: xmpDetail,
+            ScannedAtUtc: DateTime.UtcNow)
+        {
+            UptimeDays = WindowsGamingProbe.UptimeDays,
+            SystemDriveIsSsd = WindowsGamingProbe.IsSystemDriveSsd(),
+            RefreshRateHz = refresh?.Current,
+            MaxRefreshRateHz = refresh?.Max,
+            PerformancePowerPlan = powerPlan,
+            PowerPlanName = powerPlanName,
+            GameModeEnabled = WindowsGamingProbe.IsGameModeEnabled(),
+            BackgroundCaptureOff = WindowsGamingProbe.IsBackgroundCaptureOff(),
+            HardwareGpuScheduling = WindowsGamingProbe.IsHardwareGpuSchedulingEnabled(),
+            VisualEffectsOptimized = WindowsGamingProbe.AreVisualEffectsOptimized(),
+            MouseAccelerationOff = WindowsGamingProbe.IsMouseAccelerationOff(),
+            GpuDriverAgeDays = WindowsGamingProbe.ReadGpuDriverAgeDays(),
+        };
+    }
+
+    /// <summary>Applications réellement actives au démarrage (celles désactivées dans Windows ne comptent pas).</summary>
+    private static int CountEnabledStartupApps()
+    {
+        try
+        {
+            return StartupAppsService.CountEnabled(StartupAppsService.Scan());
+        }
+        catch
+        {
+            return CountStartupApplications();
+        }
+    }
+
+    /// <summary>Fichiers inutiles nettoyables (temporaires, rapports d'erreurs, crash dumps), corbeille non comptée.</summary>
+    private static long EstimateJunkSizeMb()
+    {
+        try
+        {
+            var estimate = DiskCleanupService.Estimate();
+            var bytes = estimate.Steps
+                .Where(step => step.Kind != CleanupStepKind.RecycleBin)
+                .Sum(step => step.Bytes);
+            return bytes / (1024 * 1024);
+        }
+        catch
+        {
+            return EstimateTempFolderSizeMb();
+        }
+    }
+
+    private static int CountRunningProcesses()
+    {
+        var processes = Process.GetProcesses();
+        foreach (var process in processes)
+            process.Dispose();
+        return processes.Length;
     }
 
     private static int CountInstalledApplications()
@@ -161,94 +211,6 @@ public static class SystemPerformanceScanner
         return count;
     }
 
-    private static (double UsedGb, double TotalGb) ReadRamUsage()
-    {
-        try
-        {
-            if (!GetPhysicallyInstalledSystemMemory(out var totalKb))
-                return (0, 0);
-
-            var totalGb = totalKb / 1024.0 / 1024.0;
-            var availableKb = ReadAvailableMemoryKb();
-            var usedGb = Math.Max(0, totalGb - availableKb / 1024.0 / 1024.0);
-            return (Math.Round(usedGb, 1), Math.Round(totalGb, 1));
-        }
-        catch
-        {
-            return (0, 0);
-        }
-    }
-
-    private static ulong ReadAvailableMemoryKb()
-    {
-        try
-        {
-            using var searcher = new ManagementObjectSearcher("SELECT FreePhysicalMemory FROM Win32_OperatingSystem");
-            foreach (var obj in searcher.Get())
-            {
-                if (obj["FreePhysicalMemory"] is ulong freeKb)
-                    return freeKb;
-            }
-        }
-        catch
-        {
-            // Ignorer.
-        }
-
-        return 0;
-    }
-
-    private static double? TryReadCpuTemperature()
-    {
-        try
-        {
-            using var searcher = new ManagementObjectSearcher(
-                @"root\WMI",
-                "SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature");
-
-            foreach (ManagementObject obj in searcher.Get())
-            {
-                if (obj["CurrentTemperature"] is not uint raw)
-                    continue;
-
-                var celsius = (raw / 10.0) - 273.15;
-                if (celsius is > 20 and < 110)
-                    return Math.Round(celsius, 0);
-            }
-        }
-        catch
-        {
-            // Capteur indisponible sur beaucoup de PC.
-        }
-
-        return null;
-    }
-
-    private static double? TryReadGpuTemperature()
-    {
-        try
-        {
-            using var searcher = new ManagementObjectSearcher(
-                @"root\WMI",
-                "SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature");
-
-            var temps = searcher.Get()
-                .Cast<ManagementObject>()
-                .Select(obj => obj["CurrentTemperature"] is uint raw ? (raw / 10.0) - 273.15 : double.NaN)
-                .Where(t => t is > 20 and < 110)
-                .ToList();
-
-            if (temps.Count >= 2)
-                return Math.Round(temps[^1], 0);
-        }
-        catch
-        {
-            // Ignorer.
-        }
-
-        return null;
-    }
-
     private static long EstimateTempFolderSizeMb()
     {
         long totalBytes = 0;
@@ -306,8 +268,4 @@ public static class SystemPerformanceScanner
             return 100;
         }
     }
-
-    [DllImport("kernel32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetPhysicallyInstalledSystemMemory(out long totalKb);
 }

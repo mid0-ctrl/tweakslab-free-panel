@@ -52,7 +52,7 @@ public partial class HomeView : UserControl
     private static void OnRingValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is HomeView home)
-            home.ScoreText.Text = $"{(int)Math.Round((double)e.NewValue)}%";
+            home.ScoreText.Text = $"{(int)Math.Round((double)e.NewValue)}";
     }
 
     static HomeView()
@@ -60,24 +60,54 @@ public partial class HomeView : UserControl
         DotIdle.Freeze();
     }
 
+    private readonly Action<LiveSensorReading> _liveSensorsHandler;
+    private FeatureActivationState _xmpState = FeatureActivationState.Unknown;
+    private bool _subscribed;
+
     public HomeView()
     {
         InitializeComponent();
+        _liveSensorsHandler = reading => Dispatcher.BeginInvoke(() => ApplySensorValues(
+            reading.CpuTempC, reading.GpuTempC, reading.CpuUsagePercent, reading.RamUsedGb, reading.RamTotalGb));
+
         BuildWallpaperDots();
         RefreshWallpaperCarousel();
         BuildBackgroundDots();
         RefreshBackgroundCarousel();
 
+        OfferBannerSubtitle.Text = LocalizationService.T(
+            $"Optimisation complète par l’équipe · {OfferLinks.StartingPrice}",
+            $"Full optimization by our team · {OfferLinks.StartingPrice}");
+
         SetDisplayName(UserProfileStore.Instance.ResolvedDisplayName);
         RefreshGreeting();
         ApplyPerformanceSnapshot(PerformanceScoreService.Snapshot);
 
-        PerformanceScoreService.ScoreUpdated += OnPerformanceScoreUpdated;
-        LocalizationService.LanguageChanged += OnLanguageChanged;
-
         WireInfoShowcases();
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+    }
+
+    private void Subscribe()
+    {
+        if (_subscribed)
+            return;
+
+        _subscribed = true;
+        PerformanceScoreService.ScoreUpdated += OnPerformanceScoreUpdated;
+        LocalizationService.LanguageChanged += OnLanguageChanged;
+        LiveSensors.Subscribe(_liveSensorsHandler);
+    }
+
+    private void Unsubscribe()
+    {
+        if (!_subscribed)
+            return;
+
+        _subscribed = false;
+        PerformanceScoreService.ScoreUpdated -= OnPerformanceScoreUpdated;
+        LocalizationService.LanguageChanged -= OnLanguageChanged;
+        LiveSensors.Unsubscribe(_liveSensorsHandler);
     }
 
     private void WireInfoShowcases()
@@ -102,8 +132,7 @@ public partial class HomeView : UserControl
         Dispatcher.BeginInvoke(() =>
         {
             ApplyPerformanceSnapshot(PerformanceScoreService.Snapshot);
-            if (!_ringPlayed)
-                AnimateRing(PerformanceScoreService.Score);
+            AnimateRing(PerformanceScoreService.Score);
         });
     }
 
@@ -118,7 +147,7 @@ public partial class HomeView : UserControl
         ScoreRing.BeginAnimation(Shape.StrokeDashOffsetProperty, null);
         BeginAnimation(RingValueProperty, null);
         RingValue = 0;
-        ScoreText.Text = "0%";
+        ScoreText.Text = "0";
         _ringPlayed = false;
         if (PerformanceScoreService.HasScan)
             AnimateRing(PerformanceScoreService.Score);
@@ -183,14 +212,15 @@ public partial class HomeView : UserControl
         var hour = DateTime.Now.Hour;
         return hour switch
         {
-            >= 6 and < 19 => "Bonjour",
-            >= 19 and < 23 => "Bonsoir",
-            _ => "Bonne nuit",
+            >= 6 and < 19 => LocalizationService.T("Bonjour", "Hello"),
+            >= 19 and < 23 => LocalizationService.T("Bonsoir", "Good evening"),
+            _ => LocalizationService.T("Bonne nuit", "Good night"),
         };
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        Subscribe();
         ApplyPerformanceSnapshot(PerformanceScoreService.Snapshot);
 
         if (!_ringPlayed && PerformanceScoreService.HasScan)
@@ -234,8 +264,7 @@ public partial class HomeView : UserControl
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        PerformanceScoreService.ScoreUpdated -= OnPerformanceScoreUpdated;
-        LocalizationService.LanguageChanged -= OnLanguageChanged;
+        Unsubscribe();
         StopReviewsMarquee();
 
         if (_bgTimer is not null)
@@ -277,29 +306,47 @@ public partial class HomeView : UserControl
 
     private void AnimateRing(int score)
     {
-        if (_ringPlayed) return;
-        _ringPlayed = true;
-
         score = Math.Clamp(score, PerformanceScoreDefaults.MinScore, PerformanceScoreDefaults.MaxScore);
+        ScoreCaptionText.Text = PerformanceScoreService.BandLabel(score);
 
+        // Anneau sur 100 : même à 90/90 il ne se ferme pas, la perfection n'existe pas.
         var size = ScoreRing.ActualWidth > 0 ? ScoreRing.ActualWidth : 108.0;
         var radius = size / 2.0;
         var thickness = ScoreRing.StrokeThickness;
         var dashUnit = (2 * Math.PI * radius) / thickness;
-        var fraction = Math.Clamp(score, PerformanceScoreDefaults.MinScore, PerformanceScoreDefaults.MaxScore) / 100.0;
+        var fraction = score / 100.0;
+        var duration = TimeSpan.FromMilliseconds(1200);
 
-        ScoreRing.StrokeDashArray = new DoubleCollection { dashUnit, dashUnit };
-        ScoreRing.StrokeDashOffset = dashUnit;
+        if (!_ringPlayed)
+        {
+            // Première apparition : l'anneau se remplit depuis zéro.
+            ScoreRing.StrokeDashArray = new DoubleCollection { dashUnit, dashUnit };
+            ScoreRing.StrokeDashOffset = dashUnit;
+            ScoreRing.BeginAnimation(Shape.StrokeDashOffsetProperty,
+                new DoubleAnimation(dashUnit, dashUnit * (1 - fraction), duration)
+                {
+                    EasingFunction = RingEase,
+                    FillBehavior = FillBehavior.HoldEnd,
+                });
+            BeginAnimation(RingValueProperty,
+                new DoubleAnimation(0, score, duration)
+                {
+                    EasingFunction = RingEase,
+                    FillBehavior = FillBehavior.HoldEnd,
+                });
+            _ringPlayed = true;
+            return;
+        }
 
+        // Nouveau scan ou bonus : l'anneau glisse de la valeur affichée vers la nouvelle.
         ScoreRing.BeginAnimation(Shape.StrokeDashOffsetProperty,
-            new DoubleAnimation(dashUnit, dashUnit * (1 - fraction), TimeSpan.FromMilliseconds(1200))
+            new DoubleAnimation(dashUnit * (1 - fraction), duration)
             {
                 EasingFunction = RingEase,
                 FillBehavior = FillBehavior.HoldEnd,
             });
-
         BeginAnimation(RingValueProperty,
-            new DoubleAnimation(0, score, TimeSpan.FromMilliseconds(1200))
+            new DoubleAnimation(score, duration)
             {
                 EasingFunction = RingEase,
                 FillBehavior = FillBehavior.HoldEnd,
@@ -597,12 +644,123 @@ public partial class HomeView : UserControl
         if (snapshot is null)
             return;
 
-        CpuTempText.Text = $"{snapshot.CpuTempC:0}°C";
-        GpuTempText.Text = $"{snapshot.GpuTempC:0}°C";
+        // Les relevés en direct priment ; le scan sert d'affichage initial.
+        if (LiveSensors.Latest is null)
+            ApplySensorValues(snapshot.CpuTempC, snapshot.GpuTempC, null, snapshot.RamUsedGb, snapshot.RamTotalGb);
 
-        RamUsageText.Text = snapshot.RamTotalGb > 0
-            ? $"{snapshot.RamUsedGb:0.#} / {snapshot.RamTotalGb:0.#} GB"
+        ApplyXmpState(snapshot.Xmp);
+    }
+
+    private static string NotAvailableText => LocalizationService.T("N/D", "N/A");
+
+    private void ApplySensorValues(double? cpuTempC, double? gpuTempC, double? cpuUsagePercent, double ramUsedGb, double ramTotalGb)
+    {
+        var white = (Brush)FindResource("TextWhiteBrush");
+        var gray = (Brush)FindResource("TextGrayBrush");
+
+        if (cpuTempC is { } cpuTemp)
+        {
+            var approximate = HardwareSensors.CpuTemperatureIsApproximate;
+            CpuLabelText.Text = "CPU";
+            CpuTempText.Text = approximate ? $"~{cpuTemp:0}°C" : $"{cpuTemp:0}°C";
+            CpuTempText.Foreground = white;
+            CpuTempText.ToolTip = approximate
+                ? LocalizationService.T(
+                    "Mesure du capteur de la carte mère, proche de la température du processeur.",
+                    "Reading from the motherboard sensor, close to the CPU temperature.")
+                : null;
+        }
+        else if (cpuUsagePercent is { } cpuUsage)
+        {
+            CpuLabelText.Text = LocalizationService.T("CPU (charge)", "CPU (load)");
+            CpuTempText.Text = $"{cpuUsage:0} %";
+            CpuTempText.Foreground = white;
+            CpuTempText.ToolTip = LocalizationService.T(
+                "Windows ne donne pas la température du processeur sur ce PC : la charge actuelle est affichée à la place.",
+                "Windows doesn't expose the CPU temperature on this PC: the current load is shown instead.");
+        }
+        else
+        {
+            CpuLabelText.Text = "CPU";
+            CpuTempText.Text = NotAvailableText;
+            CpuTempText.Foreground = gray;
+            CpuTempText.ToolTip = LocalizationService.T(
+                "Température du processeur non accessible sur ce PC.",
+                "CPU temperature isn't available on this PC.");
+        }
+
+        if (gpuTempC is { } gpuTemp)
+        {
+            GpuTempText.Text = $"{gpuTemp:0}°C";
+            GpuTempText.Foreground = white;
+            GpuTempText.ToolTip = null;
+        }
+        else
+        {
+            GpuTempText.Text = NotAvailableText;
+            GpuTempText.Foreground = gray;
+            GpuTempText.ToolTip = LocalizationService.T(
+                "La carte graphique n'expose pas sa température à Windows (souvent le cas des puces intégrées).",
+                "The graphics card doesn't report its temperature to Windows (common on integrated chips).");
+        }
+
+        RamUsageText.Text = ramTotalGb > 0
+            ? $"{ramUsedGb:0.#} / {ramTotalGb:0.#} GB"
             : "—";
+    }
+
+    private void ApplyXmpState(FeatureActivationState state)
+    {
+        _xmpState = state;
+        var disabled = state == FeatureActivationState.Disabled;
+
+        XmpStatusText.Text = state switch
+        {
+            FeatureActivationState.Enabled => LocalizationService.T("Activé", "Enabled"),
+            FeatureActivationState.Disabled => LocalizationService.T("Désactivé", "Disabled"),
+            FeatureActivationState.NotSupported => LocalizationService.T("Non dispo", "N/A"),
+            _ => LocalizationService.T("Inconnu", "Unknown"),
+        };
+
+        XmpStatusText.Foreground = state switch
+        {
+            FeatureActivationState.Enabled => (Brush)FindResource("GreenAccentBrush"),
+            FeatureActivationState.Disabled => (Brush)FindResource("RedAccentBrush"),
+            _ => (Brush)FindResource("TextGrayBrush"),
+        };
+
+        XmpStatusText.Cursor = disabled ? Cursors.Hand : null;
+        XmpStatusText.TextDecorations = disabled ? TextDecorations.Underline : null;
+        XmpStatusText.ToolTip = state switch
+        {
+            FeatureActivationState.Disabled => LocalizationService.T(
+                "Ta RAM tourne moins vite que sa vitesse prévue. Clique pour voir comment activer XMP / EXPO dans le BIOS.",
+                "Your RAM runs slower than its rated speed. Click to see how to enable XMP / EXPO in the BIOS."),
+            FeatureActivationState.NotSupported => LocalizationService.T(
+                "Pas de profil XMP / EXPO à activer sur ce PC (souvent le cas des portables).",
+                "No XMP / EXPO profile to enable on this PC (common on laptops)."),
+            FeatureActivationState.Unknown => LocalizationService.T(
+                "Impossible de savoir si XMP / EXPO est actif sur ce PC.",
+                "Can't tell whether XMP / EXPO is active on this PC."),
+            _ => null,
+        };
+    }
+
+    private void XmpStatus_Click(object sender, MouseButtonEventArgs e)
+    {
+        if (_xmpState != FeatureActivationState.Disabled)
+            return;
+
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(PanelEndpoints.XmpTutorialUrl) { UseShellExecute = true });
+        }
+        catch
+        {
+            // Navigateur indisponible.
+        }
+
+        e.Handled = true;
     }
 
     private void GoToProfil()
@@ -637,15 +795,17 @@ public partial class HomeView : UserControl
 
     private void PersonalizeBackground_Click(object sender, MouseButtonEventArgs e) => GoToBackgroundLibrary();
 
-    private void ReadyBanner_Click(object sender, MouseButtonEventArgs e)
+    private void OfferBanner_Click(object sender, MouseButtonEventArgs e)
     {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(PanelEndpoints.WebsiteUrl) { UseShellExecute = true });
+        OfferLinks.Open(OfferLinks.HomeBanner);
         e.Handled = true;
     }
 
-    private void OptimizePc_Click(object sender, MouseButtonEventArgs e)
+    private void ScoreRing_Click(object sender, MouseButtonEventArgs e)
     {
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(PanelEndpoints.WebsiteUrl) { UseShellExecute = true });
+        if (Window.GetWindow(this) is MainWindow main)
+            main.NavigateTo("Score");
+        e.Handled = true;
     }
 
     public FrameworkElement? GetOnboardingTarget(int step) => step switch

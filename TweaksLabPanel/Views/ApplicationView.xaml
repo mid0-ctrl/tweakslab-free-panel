@@ -4,6 +4,8 @@
 
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
+             xmlns:h="clr-namespace:TweaksLabPanel.Helpers"
+
              FontFamily="{StaticResource AppFont}"
 
              UseLayoutRounding="True" SnapsToDevicePixels="True">
@@ -12,12 +14,12 @@
 
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
 
-            <TextBlock Text="Application" Style="{StaticResource PageTitle}" HorizontalAlignment="Center"/>
+            <TextBlock Text="{h:Loc Fr='Application', En='Apps'}" Style="{StaticResource PageTitle}" HorizontalAlignment="Center"/>
 
-            <TextBlock Text="Choisis une application à configurer." Style="{StaticResource PageSubtitle}"
+            <TextBlock Text="{h:Loc Fr='Choisis une application à configurer.', En='Pick an app to set up.'}" Style="{StaticResource PageSubtitle}"
                        HorizontalAlignment="Center" Margin="0,0,0,12"/>
             <Border Background="#AA0D0A12" CornerRadius="10" Padding="12,5" HorizontalAlignment="Center" Margin="0,0,0,24">
-                <TextBlock Text="Bientôt" Foreground="White" FontWeight="Bold" FontSize="13"/>
+                <TextBlock Text="{h:Loc Fr='Bientôt', En='Soon'}" Foreground="White" FontWeight="Bold" FontSize="13"/>
             </Border>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0.72">

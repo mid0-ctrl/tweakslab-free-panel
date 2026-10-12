@@ -1,6 +1,7 @@
 <UserControl x:Class="TweaksLabPanel.Views.BackgroundLibraryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:TweaksLabPanel.Helpers"
              FontFamily="{StaticResource AppFont}">
     <ScrollViewer x:Name="PageScroll" Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
         <ScrollViewer.Resources>
@@ -18,12 +19,12 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="&#xE72B;" FontFamily="{StaticResource IconFont}" FontSize="12"
                                Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock x:Name="BackButtonText" Text="Retour au profil" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                    <TextBlock x:Name="BackButtonText" Text="{h:Loc Fr='Retour au profil', En='Back to profile'}" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
                 </StackPanel>
             </Button>
 
-            <TextBlock Text="Bibliothèque d'arrière-plans" Style="{StaticResource PageTitle}"/>
-            <TextBlock Text="Choisis un fond animé ou importe ta propre image."
+            <TextBlock Text="{h:Loc Fr='Bibliothèque d’arrière-plans', En='Background library'}" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="{h:Loc Fr='Choisis un fond animé ou importe ta propre image.', En='Pick an animated background or import your own image.'}"
                        Style="{StaticResource PageSubtitle}" Margin="0,0,0,20"/>
 
             <Border Style="{StaticResource GlassCard}" Padding="20,20,16,20" HorizontalAlignment="Stretch">

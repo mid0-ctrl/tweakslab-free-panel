@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using TweaksLabPanel.Core;
+using TweaksLabPanel.Helpers;
 using TweaksLabPanel.Services;
 
 namespace TweaksLabPanel.Views;
@@ -19,6 +20,9 @@ public partial class AstucesView : UserControl
     public AstucesView()
     {
         InitializeComponent();
+        TipsOfferText.Text = LocalizationService.T(
+            $"Tu as fait le plus simple. L’équipe TweaksLab peut optimiser ton PC en profondeur, {OfferLinks.StartingPrice}.",
+            $"You’ve done the easy part. The TweaksLab team can optimize your PC in depth, {OfferLinks.StartingPrice}.");
         Loaded += (_, _) => RefreshUi();
     }
 
@@ -35,12 +39,13 @@ public partial class AstucesView : UserControl
 
         if (result.Success)
         {
-            ShowPowerFeedback("Plan installé et activé.", success: true);
+            ShowPowerFeedback(LocalizationService.T("Plan installé et activé.", "Plan installed and turned on."), success: true);
             RefreshUi();
+            RequestRescan();
             return;
         }
 
-        ShowPowerFeedback(result.ErrorMessage ?? "Impossible d'installer le plan.", success: false);
+        ShowPowerFeedback(result.ErrorMessage ?? LocalizationService.T("Impossible d'installer le plan.", "Couldn't install the plan."), success: false);
     }
 
     private async void PowerPlanToggle_Checked(object sender, RoutedEventArgs e)
@@ -51,7 +56,7 @@ public partial class AstucesView : UserControl
         if (!TweaksLabPowerPlanService.IsInstalled())
         {
             ResetPowerToggle(false);
-            ShowPowerFeedback("Installe d'abord le plan TweaksLab Community.", success: false);
+            ShowPowerFeedback(LocalizationService.T("Installe d'abord le plan TweaksLab Community.", "Install the TweaksLab Community plan first."), success: false);
             return;
         }
 
@@ -64,11 +69,12 @@ public partial class AstucesView : UserControl
         if (result.Success)
         {
             RefreshUi();
+            RequestRescan();
             return;
         }
 
         ResetPowerToggle(false);
-        ShowPowerFeedback(result.ErrorMessage ?? "Impossible d'activer le plan.", success: false);
+        ShowPowerFeedback(result.ErrorMessage ?? LocalizationService.T("Impossible d'activer le plan.", "Couldn't turn on the plan."), success: false);
         RefreshUi();
     }
 
@@ -92,11 +98,12 @@ public partial class AstucesView : UserControl
         if (result.Success)
         {
             RefreshUi();
+            RequestRescan();
             return;
         }
 
         ResetPowerToggle(true);
-        ShowPowerFeedback(result.ErrorMessage ?? "Impossible de désactiver le plan.", success: false);
+        ShowPowerFeedback(result.ErrorMessage ?? LocalizationService.T("Impossible de désactiver le plan.", "Couldn't turn off the plan."), success: false);
         RefreshUi();
     }
 
@@ -116,13 +123,14 @@ public partial class AstucesView : UserControl
         {
             DiagnosticLog.Write("AppearanceUI", "Toggle Checked terminé avec succès");
             RefreshUi();
+            RequestRescan();
             return;
         }
 
         DiagnosticLog.Write("AppearanceUI", $"Toggle Checked échec: {result.ErrorMessage}");
         ResetAppearanceToggle(false);
         ShowAppearanceFeedback(
-            $"{result.ErrorMessage ?? "Impossible d'appliquer les réglages."}\nLogs: {WindowsAppearanceService.LogDirectoryPath}",
+            result.ErrorMessage ?? LocalizationService.T("Impossible d'appliquer les réglages.", "Couldn't apply the settings."),
             success: false);
         RefreshUi();
     }
@@ -143,13 +151,14 @@ public partial class AstucesView : UserControl
         {
             DiagnosticLog.Write("AppearanceUI", "Toggle Unchecked terminé avec succès");
             RefreshUi();
+            RequestRescan();
             return;
         }
 
         DiagnosticLog.Write("AppearanceUI", $"Toggle Unchecked échec: {result.ErrorMessage}");
         ResetAppearanceToggle(true);
         ShowAppearanceFeedback(
-            $"{result.ErrorMessage ?? "Impossible de restaurer les réglages."}\nLogs: {WindowsAppearanceService.LogDirectoryPath}",
+            result.ErrorMessage ?? LocalizationService.T("Impossible de restaurer les réglages.", "Couldn't restore the settings."),
             success: false);
         RefreshUi();
     }
@@ -171,13 +180,14 @@ public partial class AstucesView : UserControl
         if (result.Success)
         {
             RefreshStartupUi();
+            RequestRescan();
             return;
         }
 
         _startupSyncing[entry.Id] = true;
         toggle.IsChecked = !enabled;
         _startupSyncing[entry.Id] = false;
-        ShowStartupFeedback(result.ErrorMessage ?? "Impossible de modifier cette application.", success: false);
+        ShowStartupFeedback(result.ErrorMessage ?? LocalizationService.T("Impossible de modifier cette application.", "Couldn't change this app."), success: false);
         RefreshStartupUi();
     }
 
@@ -194,22 +204,22 @@ public partial class AstucesView : UserControl
         var active = TweaksLabPowerPlanService.IsActive();
 
         PowerStatusText.Text = active
-            ? "Actif"
+            ? LocalizationService.T("Actif", "Active")
             : installed
-                ? "Installé"
-                : "Non installé";
+                ? LocalizationService.T("Installé", "Installed")
+                : LocalizationService.T("Non installé", "Not installed");
 
         PowerStatusText.Foreground = active
             ? (Brush)FindResource("AccentBrush")
             : (Brush)FindResource("TextLightGrayBrush");
 
-        InstallPowerPlanButton.Content = "Installer le plan";
+        InstallPowerPlanButton.Content = LocalizationService.T("Installer le plan", "Install the plan");
         InstallPowerPlanButton.Visibility = installed ? Visibility.Collapsed : Visibility.Visible;
         ResetPowerToggle(active);
         PowerPlanToggle.IsEnabled = installed;
         PowerToggleHint.Text = installed
-            ? "Bascule vers le plan TweaksLab Community ou revient au plan précédent."
-            : "Installe d'abord le plan pour pouvoir l'activer.";
+            ? LocalizationService.T("Bascule vers le plan TweaksLab Community ou revient au plan précédent.", "Switch to the TweaksLab Community plan or go back to your previous plan.")
+            : LocalizationService.T("Installe d'abord le plan pour pouvoir l'activer.", "Install the plan first to turn it on.");
     }
 
     private void RefreshAppearanceUi()
@@ -221,12 +231,11 @@ public partial class AstucesView : UserControl
         DiagnosticLog.Write("AppearanceUI",
             $"RefreshUi storedActive={storedActive} uiActive={active} toggle={AppearanceToggle.IsChecked == true}");
 
-        AppearanceStatusText.Text = active ? "Actif" : "Inactif";
+        AppearanceStatusText.Text = active ? LocalizationService.T("Actif", "Active") : LocalizationService.T("Inactif", "Inactive");
         AppearanceStatusText.Foreground = active
             ? (Brush)FindResource("AccentBrush")
             : (Brush)FindResource("TextLightGrayBrush");
 
-        AppearanceLogHintText.Text = $"Logs locaux : {WindowsAppearanceService.LogDirectoryPath}";
         ResetAppearanceToggle(active);
     }
 
@@ -237,15 +246,17 @@ public partial class AstucesView : UserControl
         var totalCount = _startupEntries.Count;
 
         StartupCountText.Text = totalCount == 0
-            ? "Aucune application"
-            : $"{enabledCount} active{(enabledCount > 1 ? "s" : "")} sur {totalCount}";
+            ? LocalizationService.T("Aucune application", "No apps")
+            : LocalizationService.T(
+                $"{enabledCount} active{(enabledCount > 1 ? "s" : "")} sur {totalCount}",
+                $"{enabledCount} of {totalCount} enabled");
 
         StartupAdviceText.Text = enabledCount switch
         {
-            0 => "Parfait — aucune application ne se lance au démarrage. Ton PC démarrera plus vite.",
-            <= 5 => "C'est bien. Garde uniquement les applications vraiment utiles au démarrage.",
-            <= 10 => "Tu as plusieurs applications au démarrage. Désactive celles que tu n'utilises pas tous les jours pour gagner en performance.",
-            _ => "Beaucoup d'applications se lancent au démarrage — c'est important de les réduire pour de meilleures performances et moins de lag.",
+            0 => LocalizationService.T("Parfait — aucune application ne se lance au démarrage. Ton PC démarrera plus vite.", "Perfect — no apps launch at startup. Your PC will boot faster."),
+            <= 5 => LocalizationService.T("C'est bien. Garde uniquement les applications vraiment utiles au démarrage.", "Good. Keep only the apps you really need at startup."),
+            <= 10 => LocalizationService.T("Tu as plusieurs applications au démarrage. Désactive celles que tu n'utilises pas tous les jours pour gagner en performance.", "You have several apps at startup. Turn off the ones you don't use every day to gain performance."),
+            _ => LocalizationService.T("Beaucoup d'applications se lancent au démarrage — c'est important de les réduire pour de meilleures performances et moins de lag.", "Lots of apps launch at startup — cutting them down means better performance and less lag."),
         };
 
         if (totalCount == 0)
@@ -259,7 +270,7 @@ public partial class AstucesView : UserControl
 
         StartupEmptyText.Visibility = Visibility.Collapsed;
         StartupAppsExpander.Visibility = Visibility.Visible;
-        StartupExpanderTitle.Text = $"Voir les applications ({totalCount})";
+        StartupExpanderTitle.Text = LocalizationService.T($"Voir les applications ({totalCount})", $"See the apps ({totalCount})");
 
         BuildStartupList();
     }
@@ -374,6 +385,11 @@ public partial class AstucesView : UserControl
     }
 
     private void HideStartupFeedback() => StartupFeedbackText.Visibility = Visibility.Collapsed;
+
+    /// <summary>Le score de santé est recalculé après chaque réglage appliqué (vraie mesure, pas de bonus).</summary>
+    private static void RequestRescan() => _ = PerformanceScoreService.ScanAsync();
+
+    private void TipsOffer_Click(object sender, RoutedEventArgs e) => OfferLinks.Open(OfferLinks.Tips);
 
     public void ScrollToTop() => PageScroll.ScrollToVerticalOffset(0);
 

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,6 +29,7 @@ public partial class MainWindow : Window
     private bool _notifAnimating;
     private bool _notifOpen;
     private string? _escapeBackPage;
+    private string _currentPage = "Accueil";
     private string _wallpaperLibraryReturnPage = "Profil";
     private string _backgroundLibraryReturnPage = "Profil";
 
@@ -61,6 +62,42 @@ public partial class MainWindow : Window
             QueueStartupOnboarding();
         };
         NavigateTo("Accueil");
+        ApplyDisplayName(UserProfileStore.Instance.ResolvedDisplayName);
+        LocalizationService.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged() =>
+        Dispatcher.BeginInvoke(ApplyLanguage, DispatcherPriority.Background);
+
+    /// <summary>
+    /// Changement de langue : menu reconstruit et pages recréées (leurs textes générés en code suivent).
+    /// Une conversation en cours avec Bryan est conservée.
+    /// </summary>
+    private void ApplyLanguage()
+    {
+        BuildSidebar();
+        BuildSocialBar();
+
+        var kept = _pages
+            .Where(p => p.Value is AssistanceView chat && chat.HasConversation)
+            .ToList();
+        _pages.Clear();
+        foreach (var (key, page) in kept)
+            _pages[key] = page;
+
+        switch (_currentPage)
+        {
+            case "BibliothequeFondsEcran":
+                NavigateToWallpaperLibrary(_wallpaperLibraryReturnPage);
+                break;
+            case "BibliothequeFonds":
+                NavigateToBackgroundLibrary(_backgroundLibraryReturnPage);
+                break;
+            default:
+                NavigateTo(_currentPage);
+                break;
+        }
+
         ApplyDisplayName(UserProfileStore.Instance.ResolvedDisplayName);
     }
 
@@ -202,8 +239,7 @@ public partial class MainWindow : Window
     private void AddCreatorNav()
     {
         var creator = new SidebarNavButton("Creator", LocalizationService.NavCreator, "\uE734", goldLabel: true);
-        creator.Root.MouseLeftButtonUp += (_, _) =>
-            Process.Start(new ProcessStartInfo(PanelEndpoints.WebsiteUrl) { UseShellExecute = true });
+        creator.Root.MouseLeftButtonUp += (_, _) => OfferLinks.Open(OfferLinks.Creator);
         NavPanel.Children.Add(creator.Root);
     }
 
@@ -240,7 +276,7 @@ public partial class MainWindow : Window
             SocialIconHelper.CreateIcon("youtube.png", SocialIconStyle.DarkGlyph, SocialIconSize) ?? MakeSocialFallback("Y"));
         AddSocial(PanelEndpoints.SocialDiscord, "Discord",
             SocialIconHelper.CreateIcon("discord.png", SocialIconStyle.Raw, SocialIconSize) ?? MakeSocialFallback("D"));
-        AddSocial(PanelEndpoints.WebsiteUrl, "Site web",
+        AddSocial(OfferLinks.BuildUrl(OfferLinks.SidebarWebsite), LocalizationService.T("Site web", "Website"),
             SocialIconHelper.CreateIcon("web.png", SocialIconStyle.DarkGlyph, SocialIconLargeSize) ?? MakeSocialFallback("W"));
     }
 
@@ -1090,6 +1126,7 @@ public partial class MainWindow : Window
     public void NavigateTo(string page)
     {
         _escapeBackPage = null;
+        _currentPage = page;
         var isReturning = _pages.ContainsKey(page);
 
         if (!_pages.ContainsKey(page))
@@ -1108,6 +1145,7 @@ public partial class MainWindow : Window
                 "Assistance" => new AssistanceView(),
                 "Parametres" => new ParametresView(),
                 "Profil" => new ProfilView(),
+                "Score" => new ScoreDetailView(),
                 _ => new HomeView()
             };
         }
@@ -1132,8 +1170,17 @@ public partial class MainWindow : Window
             pausedHome.PauseWallpaperCarousel();
         }
 
+        // Le détail du score dépend de l'accueil : bouton Accueil actif, Échap pour y revenir.
+        var activeNav = page == "Score" ? "Accueil" : page;
         foreach (var (key, nav) in _navButtons)
-            nav.SetActive(key == page);
+            nav.SetActive(key == activeNav);
+
+        if (page == "Score")
+        {
+            _escapeBackPage = "Accueil";
+            if (_pages[page] is ScoreDetailView scoreDetail)
+                scoreDetail.ScrollToTop();
+        }
 
         if (page == "Accueil" && _pages[page] is HomeView home)
         {
@@ -1172,6 +1219,7 @@ public partial class MainWindow : Window
         }
 
         PageContent.Content = _pages["BibliothequeFondsEcran"];
+        _currentPage = "BibliothequeFondsEcran";
         _wallpaperLibraryReturnPage = returnTo;
         _escapeBackPage = returnTo;
 
@@ -1191,6 +1239,7 @@ public partial class MainWindow : Window
         }
 
         PageContent.Content = _pages["BibliothequeFonds"];
+        _currentPage = "BibliothequeFonds";
         _backgroundLibraryReturnPage = returnTo;
         _escapeBackPage = returnTo;
 
@@ -1264,11 +1313,6 @@ public partial class MainWindow : Window
         BackgroundSelectionState.IsCustom = true;
         BackgroundSelectionState.CustomPath = filePath;
         UpdateEasterEggHint();
-    }
-
-    public static void OpenWebsite()
-    {
-        Process.Start(new ProcessStartInfo(PanelEndpoints.WebsiteUrl) { UseShellExecute = true });
     }
 
     private void Notif_Click(object sender, RoutedEventArgs e)

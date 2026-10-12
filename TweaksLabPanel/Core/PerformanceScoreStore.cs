@@ -1,6 +1,5 @@
 using System.IO;
 using System.Text.Json;
-using TweaksLabPanel.Core;
 
 namespace TweaksLabPanel.Core;
 
@@ -16,7 +15,6 @@ public sealed class PerformanceScoreStore
         "performance.json");
 
     public bool HasScan { get; private set; }
-    public int Score { get; private set; }
     public PerformanceSnapshot? Snapshot { get; private set; }
 
     public void Load()
@@ -28,24 +26,21 @@ public sealed class PerformanceScoreStore
 
             var json = File.ReadAllText(_settingsPath);
             var data = JsonSerializer.Deserialize<PerformanceData>(json);
-            if (data is null)
+            if (data is null || !data.HasScan)
                 return;
 
-            HasScan = data.HasScan;
-            Score = Math.Clamp(data.Score, PerformanceScoreDefaults.MinScore, PerformanceScoreDefaults.MaxScore);
             Snapshot = data.ToSnapshot();
+            HasScan = true;
         }
         catch
         {
             HasScan = false;
-            Score = 0;
             Snapshot = null;
         }
     }
 
-    public void Save(int score, PerformanceSnapshot snapshot)
+    public void Save(PerformanceSnapshot snapshot)
     {
-        Score = Math.Clamp(score, PerformanceScoreDefaults.MinScore, PerformanceScoreDefaults.MaxScore);
         Snapshot = snapshot;
         HasScan = true;
         Persist();
@@ -59,8 +54,7 @@ public sealed class PerformanceScoreStore
             if (!string.IsNullOrEmpty(directory))
                 Directory.CreateDirectory(directory);
 
-            var data = PerformanceData.From(Score, Snapshot);
-            File.WriteAllText(_settingsPath, JsonSerializer.Serialize(data, JsonOptions));
+            File.WriteAllText(_settingsPath, JsonSerializer.Serialize(PerformanceData.From(Snapshot), JsonOptions));
         }
         catch
         {
@@ -70,27 +64,45 @@ public sealed class PerformanceScoreStore
 
     private sealed class PerformanceData
     {
+        // Format 2 : températures réelles (null si capteur absent). Avant, des valeurs par défaut étaient enregistrées.
+        // Format 3 : mesures du score de santé 0–90 (réglages Windows, SSD, pilote, écran…).
+        private const int CurrentFormat = 3;
+
+        public int Format { get; set; }
         public bool HasScan { get; set; }
-        public int Score { get; set; }
         public int InstalledAppsCount { get; set; }
         public int StartupAppsCount { get; set; }
         public int RecentErrorCount { get; set; }
-        public double CpuTempC { get; set; }
-        public double GpuTempC { get; set; }
+        public double? CpuTempC { get; set; }
+        public double? GpuTempC { get; set; }
         public double RamUsedGb { get; set; }
         public double RamTotalGb { get; set; }
         public long TempFolderSizeMb { get; set; }
         public int RunningProcessCount { get; set; }
         public int SystemDriveFreePercent { get; set; }
+        public FeatureActivationState Xmp { get; set; } = FeatureActivationState.Unknown;
+        public string? XmpDetail { get; set; }
+        public double? UptimeDays { get; set; }
+        public bool? SystemDriveIsSsd { get; set; }
+        public int? RefreshRateHz { get; set; }
+        public int? MaxRefreshRateHz { get; set; }
+        public bool? PerformancePowerPlan { get; set; }
+        public string? PowerPlanName { get; set; }
+        public bool? GameModeEnabled { get; set; }
+        public bool? BackgroundCaptureOff { get; set; }
+        public bool? HardwareGpuScheduling { get; set; }
+        public bool? VisualEffectsOptimized { get; set; }
+        public bool? MouseAccelerationOff { get; set; }
+        public int? GpuDriverAgeDays { get; set; }
         public DateTime ScannedAtUtc { get; set; }
 
-        public static PerformanceData From(int score, PerformanceSnapshot? snapshot) =>
+        public static PerformanceData From(PerformanceSnapshot? snapshot) =>
             snapshot is null
-                ? new PerformanceData { Score = score }
+                ? new PerformanceData { Format = CurrentFormat }
                 : new PerformanceData
                 {
+                    Format = CurrentFormat,
                     HasScan = true,
-                    Score = score,
                     InstalledAppsCount = snapshot.InstalledAppsCount,
                     StartupAppsCount = snapshot.StartupAppsCount,
                     RecentErrorCount = snapshot.RecentErrorCount,
@@ -101,6 +113,20 @@ public sealed class PerformanceScoreStore
                     TempFolderSizeMb = snapshot.TempFolderSizeMb,
                     RunningProcessCount = snapshot.RunningProcessCount,
                     SystemDriveFreePercent = snapshot.SystemDriveFreePercent,
+                    Xmp = snapshot.Xmp,
+                    XmpDetail = snapshot.XmpDetail,
+                    UptimeDays = snapshot.UptimeDays,
+                    SystemDriveIsSsd = snapshot.SystemDriveIsSsd,
+                    RefreshRateHz = snapshot.RefreshRateHz,
+                    MaxRefreshRateHz = snapshot.MaxRefreshRateHz,
+                    PerformancePowerPlan = snapshot.PerformancePowerPlan,
+                    PowerPlanName = snapshot.PowerPlanName,
+                    GameModeEnabled = snapshot.GameModeEnabled,
+                    BackgroundCaptureOff = snapshot.BackgroundCaptureOff,
+                    HardwareGpuScheduling = snapshot.HardwareGpuScheduling,
+                    VisualEffectsOptimized = snapshot.VisualEffectsOptimized,
+                    MouseAccelerationOff = snapshot.MouseAccelerationOff,
+                    GpuDriverAgeDays = snapshot.GpuDriverAgeDays,
                     ScannedAtUtc = snapshot.ScannedAtUtc,
                 };
 
@@ -109,19 +135,36 @@ public sealed class PerformanceScoreStore
                 InstalledAppsCount,
                 StartupAppsCount,
                 RecentErrorCount,
-                CpuTempC,
-                GpuTempC,
+                Format >= 2 ? CpuTempC : null,
+                Format >= 2 ? GpuTempC : null,
                 RamUsedGb,
                 RamTotalGb,
                 TempFolderSizeMb,
                 RunningProcessCount,
                 SystemDriveFreePercent,
-                ScannedAtUtc == default ? DateTime.UtcNow : ScannedAtUtc);
+                Xmp,
+                XmpDetail,
+                ScannedAtUtc == default ? DateTime.UtcNow : ScannedAtUtc)
+            {
+                UptimeDays = UptimeDays,
+                SystemDriveIsSsd = SystemDriveIsSsd,
+                RefreshRateHz = RefreshRateHz,
+                MaxRefreshRateHz = MaxRefreshRateHz,
+                PerformancePowerPlan = PerformancePowerPlan,
+                PowerPlanName = PowerPlanName,
+                GameModeEnabled = GameModeEnabled,
+                BackgroundCaptureOff = BackgroundCaptureOff,
+                HardwareGpuScheduling = HardwareGpuScheduling,
+                VisualEffectsOptimized = VisualEffectsOptimized,
+                MouseAccelerationOff = MouseAccelerationOff,
+                GpuDriverAgeDays = GpuDriverAgeDays,
+            };
     }
 }
 
+/// <summary>Score de santé : de 0 à 90, la perfection n'existe pas.</summary>
 public static class PerformanceScoreDefaults
 {
-    public const int MinScore = 55;
-    public const int MaxScore = 80;
+    public const int MinScore = 0;
+    public const int MaxScore = 90;
 }

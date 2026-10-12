@@ -12,6 +12,7 @@ public partial class ParametresView : UserControl
 {
     private IReadOnlyList<DisplayModeInfo> _modes = [];
     private DisplayModeInfo? _current;
+    private bool _syncingCombos;
 
     public ParametresView()
     {
@@ -41,16 +42,34 @@ public partial class ParametresView : UserControl
         ReplayOnboardingBtnText.Text = LocalizationService.ReplayOnboardingButton;
     }
 
-    public void RefreshBiosFeatures()
+    private bool _biosScanning;
+
+    /// <summary>Lecture TPM / Secure Boot / XMP en arrière-plan (requêtes WMI lentes) : la page ne fige pas.</summary>
+    public async void RefreshBiosFeatures()
     {
         ApplyLocalizedText();
-        var snapshot = BiosFeaturesScanner.Scan();
-        ApplyStatus(TpmStatusText, snapshot.Tpm);
-        ApplyStatus(SecureBootStatusText, snapshot.SecureBoot);
-        ApplyStatus(XmpStatusText, snapshot.Xmp, snapshot.XmpDetail);
-        XmpTutorialLink.Visibility = snapshot.Xmp == FeatureActivationState.Disabled
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        if (_biosScanning)
+            return;
+
+        _biosScanning = true;
+        try
+        {
+            var snapshot = await Task.Run(BiosFeaturesScanner.Scan);
+            ApplyStatus(TpmStatusText, snapshot.Tpm);
+            ApplyStatus(SecureBootStatusText, snapshot.SecureBoot);
+            ApplyStatus(XmpStatusText, snapshot.Xmp, snapshot.XmpDetail);
+            XmpTutorialLink.Visibility = snapshot.Xmp == FeatureActivationState.Disabled
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+        catch
+        {
+            // Les statuts restent « — ».
+        }
+        finally
+        {
+            _biosScanning = false;
+        }
     }
 
     private void XmpTutorialLink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -126,8 +145,10 @@ public partial class ParametresView : UserControl
             ResolutionCombo.SelectedIndex = 0;
 
         RefreshRefreshRates();
+        _syncingCombos = true;
         LanguageCombo.SelectedIndex = AppSettingsStore.Instance.Language == "en" ? 1 : 0;
         KeyboardCombo.SelectedIndex = AppSettingsStore.Instance.KeyboardLayout == "qwerty" ? 1 : 0;
+        _syncingCombos = false;
     }
 
     private void ResolutionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e) => RefreshRefreshRates();
@@ -177,6 +198,7 @@ public partial class ParametresView : UserControl
         {
             MessageBox.Show(message, LocalizationService.DisplaySection, MessageBoxButton.OK, MessageBoxImage.Information);
             RefreshDisplaySettings();
+            _ = PerformanceScoreService.ScanAsync();
         }
         else
         {
@@ -186,7 +208,7 @@ public partial class ParametresView : UserControl
 
     private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!IsLoaded || LanguageCombo.SelectedIndex < 0)
+        if (_syncingCombos || !IsLoaded || LanguageCombo.SelectedIndex < 0)
             return;
 
         LocalizationService.SetLanguage(LanguageCombo.SelectedIndex == 1 ? "en" : "fr");
@@ -194,7 +216,7 @@ public partial class ParametresView : UserControl
 
     private void KeyboardCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!IsLoaded || KeyboardCombo.SelectedIndex < 0)
+        if (_syncingCombos || !IsLoaded || KeyboardCombo.SelectedIndex < 0)
             return;
 
         AppSettingsStore.Instance.SaveKeyboardLayout(KeyboardCombo.SelectedIndex == 1 ? "qwerty" : "azerty");

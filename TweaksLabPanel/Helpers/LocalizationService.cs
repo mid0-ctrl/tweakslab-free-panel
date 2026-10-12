@@ -10,8 +10,10 @@ public static class LocalizationService
 
     public static void SetLanguage(string language)
     {
+        var wasEnglish = IsEnglish;
         AppSettingsStore.Instance.SaveLanguage(language);
-        LanguageChanged?.Invoke();
+        if (IsEnglish != wasEnglish)
+            LanguageChanged?.Invoke();
     }
 
     public static string T(string fr, string en) =>
@@ -24,7 +26,7 @@ public static class LocalizationService
     public static string NavApplication => T("Application", "Apps");
     public static string NavNettoyer => T("Nettoyer Windows", "Clean Windows");
     public static string NavReinstallation => T("Réinstallation", "Reinstall");
-    public static string NavRecommandations => T("Recommandations", "Tips");
+    public static string NavRecommandations => T("Recommandations", "Recommendations");
     public static string NavAstuces => T("Astuces", "Tweaks");
     public static string NavGpu => T("Optimiser votre GPU", "Optimize GPU");
     public static string NavParametres => T("Paramètres", "Settings");
@@ -83,8 +85,8 @@ public static class LocalizationService
         "Replay the first-visit tutorial with highlighted areas.");
     public static string ReplayOnboardingButton => T("Relancer la visite guidée", "Replay guided tour");
     public static string PerformanceScoreInfo => T(
-        "Estimation des performances selon des critères par TweaksLab.",
-        "Performance estimate based on TweaksLab criteria.");
+        "Score de santé de 0 à 90 (la perfection n'existe pas), mesuré sur ton PC : démarrage, stockage, mémoire, températures, réglages Windows et pilotes. Clique sur l'anneau pour le détail.",
+        "Health score from 0 to 90 (nothing is perfect), measured on your PC: startup, storage, memory, temperatures, Windows settings and drivers. Click the ring for the breakdown.");
     public static string ReviewsInfo => T(
         "Avis renouvelés toutes les 2 semaines.",
         "Reviews refreshed every 2 weeks.");

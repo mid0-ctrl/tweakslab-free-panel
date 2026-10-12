@@ -128,7 +128,7 @@ public static class ShareConfigCardRenderer
             }
         }
 
-        throw new InvalidOperationException("Le presse-papiers est indisponible.");
+        throw new InvalidOperationException(LocalizationService.T("Le presse-papiers est indisponible.", "The clipboard is unavailable."));
     }
 
     private static BitmapSource EnsureClipboardCompatible(BitmapSource source)
@@ -152,12 +152,12 @@ public static class ShareConfigCardRenderer
 
     private static string[] BuildSpecLines(SystemSpecsSnapshot specs) =>
     [
-        $"OS : {specs.OperatingSystem}",
-        $"CPU : {specs.Processor} ({specs.ProcessorDetails})",
-        $"GPU : {specs.GraphicsCard}",
-        $"RAM : {specs.Memory}",
-        $"Carte mère : {specs.Motherboard}",
-        $"Stockage : {specs.Storage}",
+        $"{LocalizationService.T("OS :", "OS:")} {specs.OperatingSystem}",
+        $"{LocalizationService.T("CPU :", "CPU:")} {specs.Processor} ({specs.ProcessorDetails})",
+        $"{LocalizationService.T("GPU :", "GPU:")} {specs.GraphicsCard}",
+        $"{LocalizationService.T("RAM :", "RAM:")} {specs.Memory}",
+        $"{LocalizationService.T("Carte mère :", "Motherboard:")} {specs.Motherboard}",
+        $"{LocalizationService.T("Stockage :", "Storage:")} {specs.Storage}",
     ];
 
     private static FormattedText Format(

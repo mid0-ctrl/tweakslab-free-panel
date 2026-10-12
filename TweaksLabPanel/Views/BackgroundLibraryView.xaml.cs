@@ -32,8 +32,8 @@ public partial class BackgroundLibraryView : UserControl
     public void ConfigureReturn(string returnTo)
     {
         BackButtonText.Text = returnTo == "Accueil"
-            ? "Retour à l'accueil"
-            : "Retour au profil";
+            ? LocalizationService.T("Retour à l'accueil", "Back to home")
+            : LocalizationService.T("Retour au profil", "Back to profile");
     }
 
     private void BuildLibrary()
@@ -70,7 +70,7 @@ public partial class BackgroundLibraryView : UserControl
     {
         var dlg = new OpenFileDialog
         {
-            Title = "Importer un fond",
+            Title = LocalizationService.T("Importer un fond", "Import a background"),
             Filter = "Images (*.png;*.jpg;*.jpeg;*.webp;*.bmp)|*.png;*.jpg;*.jpeg;*.webp;*.bmp",
             CheckFileExists = true,
         };

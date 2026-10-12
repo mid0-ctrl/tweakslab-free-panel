@@ -1,6 +1,7 @@
 using System.IO;
 using Microsoft.Win32;
 using TweaksLabPanel.Core;
+using TweaksLabPanel.Helpers;
 
 namespace TweaksLabPanel.Services;
 
@@ -54,23 +55,33 @@ public static class StartupAppsService
         try
         {
             if (!entry.CanToggle)
-                return Fail("Cette application ne peut pas être modifiée depuis le panel.");
+                return Fail(LocalizationService.T(
+                    "Cette application ne peut pas être modifiée depuis le panel.",
+                    "This app can't be changed from the panel."));
 
             return entry.Source switch
             {
                 StartupEntrySource.UserRun => SetRunApproved(Registry.CurrentUser, entry.Name, enabled)
                     ? Ok()
-                    : Fail("Impossible de modifier cette application."),
+                    : Fail(LocalizationService.T(
+                        "Impossible de modifier cette application.",
+                        "Couldn't change this app.")),
                 StartupEntrySource.MachineRun => SetRunApproved(Registry.LocalMachine, entry.Name, enabled)
                     ? Ok()
-                    : Fail("Droits administrateur requis pour modifier cette application."),
+                    : Fail(LocalizationService.T(
+                        "Droits administrateur requis pour modifier cette application.",
+                        "Administrator rights are required to change this app.")),
                 StartupEntrySource.UserStartupFolder => SetUserStartupFileEnabled(entry.Name, enabled),
-                _ => Fail("Cette application ne peut pas être modifiée depuis le panel."),
+                _ => Fail(LocalizationService.T(
+                    "Cette application ne peut pas être modifiée depuis le panel.",
+                    "This app can't be changed from the panel.")),
             };
         }
         catch
         {
-            return Fail("Impossible de modifier cette application.");
+            return Fail(LocalizationService.T(
+                "Impossible de modifier cette application.",
+                "Couldn't change this app."));
         }
     }
 
@@ -153,7 +164,7 @@ public static class StartupAppsService
                 {
                     Id = $"{source}:{fileName}",
                     Name = Path.GetFileNameWithoutExtension(fileName),
-                    Detail = "Désactivé via TweaksLab Panel",
+                    Detail = LocalizationService.T("Désactivé via TweaksLab Panel", "Disabled via TweaksLab Panel"),
                     Source = source,
                     IsEnabled = false,
                     CanToggle = canToggle,
@@ -187,7 +198,7 @@ public static class StartupAppsService
         if (enabled)
         {
             if (!File.Exists(disabledPath))
-                return Fail("Fichier introuvable.");
+                return Fail(LocalizationService.T("Fichier introuvable.", "File not found."));
 
             if (File.Exists(livePath))
                 File.Delete(livePath);
@@ -197,7 +208,7 @@ public static class StartupAppsService
         }
 
         if (!File.Exists(livePath))
-            return Fail("Fichier introuvable.");
+            return Fail(LocalizationService.T("Fichier introuvable.", "File not found."));
 
         if (File.Exists(disabledPath))
             File.Delete(disabledPath);

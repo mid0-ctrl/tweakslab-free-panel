@@ -1,6 +1,7 @@
 <UserControl x:Class="TweaksLabPanel.Views.ProfilView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:TweaksLabPanel.Helpers"
              FontFamily="{StaticResource AppFont}">
     <ScrollViewer x:Name="PageScroll" Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
         <ScrollViewer.Resources>
@@ -13,14 +14,14 @@
             </Style>
         </ScrollViewer.Resources>
         <StackPanel x:Name="OnboardingProfilContent">
-            <TextBlock Text="Profil" Style="{StaticResource PageTitle}"/>
-            <TextBlock Text="Personnalise ton profil : pseudo, photo et jeux favoris."
+            <TextBlock Text="{h:Loc Fr='Profil', En='Profile'}" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="{h:Loc Fr='Personnalise ton profil : pseudo, photo et jeux favoris.', En='Customize your profile: username, picture and favorite games.'}"
                        Style="{StaticResource PageSubtitle}" Margin="0,0,0,18"/>
 
             <!-- Identité -->
             <Border x:Name="OnboardingProfileCard" Style="{StaticResource GlassCard}" Padding="24,20" Margin="0,0,0,14">
                 <StackPanel>
-                    <TextBlock Text="TON IDENTITÉ" Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="{h:Loc Fr='TON IDENTITÉ', En='YOUR IDENTITY'}" Style="{StaticResource SectionTitle}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
                     <StackPanel x:Name="OnboardingProfileIdentity" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,12">
                         <TextBlock x:Name="NameText" Text="" Foreground="{StaticResource TextWhiteBrush}"
@@ -33,13 +34,13 @@
                                  LostFocus="PseudoBox_LostFocus" KeyDown="PseudoBox_KeyDown"/>
                         <Border x:Name="EditNameIcon" Cursor="Hand" VerticalAlignment="Center"
                                 Margin="10,0,0,0" Padding="4" Background="Transparent"
-                                MouseLeftButtonUp="EditName_Click" ToolTip="Modifier le pseudo">
+                                MouseLeftButtonUp="EditName_Click" ToolTip="{h:Loc Fr='Modifier le pseudo', En='Edit username'}">
                             <TextBlock Text="&#xE70F;" FontFamily="{StaticResource IconFont}" FontSize="17"
                                        Foreground="{StaticResource TextWhiteBrush}" Opacity="0.85"/>
                         </Border>
                     </StackPanel>
 
-                    <TextBlock Text="Bio (20 caractères max)" Foreground="{StaticResource TextGrayBrush}"
+                    <TextBlock Text="{h:Loc Fr='Bio (20 caractères max)', En='Bio (20 characters max)'}" Foreground="{StaticResource TextGrayBrush}"
                                FontSize="11" HorizontalAlignment="Center" Margin="0,0,0,6"/>
                     <TextBox x:Name="BioBox" MaxLength="20" Width="240" HorizontalAlignment="Center"
                              FontSize="12" Foreground="{StaticResource TextWhiteBrush}"
@@ -53,7 +54,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE8B5;" FontFamily="{StaticResource IconFont}" FontSize="14"
                                        Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="Importer ma photo de profil" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                            <TextBlock Text="{h:Loc Fr='Importer ma photo de profil', En='Import my profile picture'}" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
 
@@ -79,9 +80,9 @@
                             </Grid>
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Top">
-                                <TextBlock Text="Photos de profil" Foreground="{StaticResource TextWhiteBrush}"
+                                <TextBlock Text="{h:Loc Fr='Photos de profil', En='Profile pictures'}" Foreground="{StaticResource TextWhiteBrush}"
                                            FontWeight="SemiBold" FontSize="13" Margin="0,0,0,4"/>
-                                <TextBlock Text="Choisis un avatar dans la grille ci-dessous"
+                                <TextBlock Text="{h:Loc Fr='Choisis un avatar dans la grille ci-dessous', En='Pick an avatar from the grid below'}"
                                            Foreground="{StaticResource TextGrayBrush}" FontSize="11" Margin="0,0,0,12"/>
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
@@ -178,8 +179,8 @@
             <!-- Jeux favoris -->
             <Border Style="{StaticResource GlassCard}" Padding="28,20" Margin="0,0,0,14">
                 <StackPanel>
-                    <TextBlock Text="JEUX FAVORIS" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
-                    <TextBlock Text="Clique sur un jeu pour l'ajouter à tes favoris."
+                    <TextBlock Text="{h:Loc Fr='JEUX FAVORIS', En='FAVORITE GAMES'}" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                    <TextBlock Text="{h:Loc Fr='Clique sur un jeu pour l’ajouter à tes favoris.', En='Click a game to add it to your favorites.'}"
                                Foreground="{StaticResource TextGrayBrush}" FontSize="12" Margin="0,0,0,14"/>
                         <UniformGrid Columns="3">
                         <Border x:Name="GameFortniteTile" Tag="fortnite" Margin="0,0,6,0" Height="88"
@@ -229,13 +230,13 @@
             <StackPanel x:Name="PersonalizationSection">
                 <Border Style="{StaticResource GlassCard}" Padding="28,24" Margin="0,0,0,12">
                     <StackPanel>
-                        <TextBlock Text="APPARENCE" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
-                        <TextBlock Text="Fais défiler le carrousel pour parcourir tes fonds, ou ouvre toute la bibliothèque."
+                        <TextBlock Text="{h:Loc Fr='APPARENCE', En='APPEARANCE'}" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                        <TextBlock Text="{h:Loc Fr='Fais défiler le carrousel pour parcourir tes fonds, ou ouvre toute la bibliothèque.', En='Scroll the carousel to browse backgrounds, or open the full library.'}"
                                    Foreground="{StaticResource TextGrayBrush}" FontSize="12" Margin="0,0,0,18"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <Border Background="#33A855F7" CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
-                                <TextBlock Text="Aperçu" FontSize="10" FontWeight="SemiBold"
+                                <TextBlock Text="{h:Loc Fr='Aperçu', En='Preview'}" FontSize="10" FontWeight="SemiBold"
                                            Foreground="{StaticResource TextWhiteBrush}"/>
                             </Border>
                             <TextBlock x:Name="BackgroundWalletCount" Text=""
@@ -279,7 +280,7 @@
                         <Button x:Name="OpenLibraryHitArea" Style="{StaticResource GlassCardButton}"
                                 HorizontalAlignment="Center" Margin="0,18,0,4"
                                 Panel.ZIndex="10" Click="OpenBackgroundLibrary_Click">
-                            <TextBlock Text="Ouvrir toute la bibliothèque"
+                            <TextBlock Text="{h:Loc Fr='Ouvrir toute la bibliothèque', En='Open the full library'}"
                                        Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold"/>
                         </Button>
                     </StackPanel>
@@ -287,8 +288,8 @@
 
                 <Border Style="{StaticResource GlassCard}" Padding="28,20" Margin="0,0,0,12">
                     <StackPanel>
-                        <TextBlock Text="FONDS D'ÉCRAN" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
-                        <TextBlock Text="Applique un fond sur ton bureau Windows — aperçu gaming ou ouvre toute la bibliothèque."
+                        <TextBlock Text="{h:Loc Fr='FONDS D’ÉCRAN', En='WALLPAPERS'}" Style="{StaticResource SectionTitle}" Margin="0,0,0,6"/>
+                        <TextBlock Text="{h:Loc Fr='Applique un fond sur ton bureau Windows — aperçu gaming ou ouvre toute la bibliothèque.', En='Apply a wallpaper to your Windows desktop — gaming preview, or open the full library.'}"
                                    Foreground="{StaticResource TextGrayBrush}" FontSize="12" TextWrapping="Wrap"
                                    Margin="0,0,0,14"/>
 
@@ -307,7 +308,7 @@
                         <Button x:Name="OpenWallpaperLibraryHitArea" Style="{StaticResource GlassCardButton}"
                                 HorizontalAlignment="Center" Margin="0,4,0,0"
                                 Click="OpenWallpaperLibrary_Click">
-                            <TextBlock Text="Ouvrir toute la bibliothèque"
+                            <TextBlock Text="{h:Loc Fr='Ouvrir toute la bibliothèque', En='Open the full library'}"
                                        Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold"/>
                         </Button>
                     </StackPanel>
@@ -316,10 +317,10 @@
 
             <!-- Pied de page -->
             <Grid Margin="0,16,0,8">
-                <TextBlock Text="Membre depuis 12 juillet 2026" Foreground="{StaticResource TextGrayBrush}"
+                <TextBlock x:Name="MemberSinceText" Foreground="{StaticResource TextGrayBrush}"
                            FontSize="12" VerticalAlignment="Center"/>
                 <Button Style="{StaticResource SaveButton}" HorizontalAlignment="Right">
-                    <TextBlock Text="Enregistrer les modifications" Foreground="White" FontSize="13"/>
+                    <TextBlock Text="{h:Loc Fr='Enregistrer les modifications', En='Save changes'}" Foreground="White" FontSize="13"/>
                 </Button>
             </Grid>
         </StackPanel>

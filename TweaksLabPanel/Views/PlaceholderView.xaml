@@ -1,18 +1,19 @@
 <UserControl x:Class="TweaksLabPanel.Views.PlaceholderView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:TweaksLabPanel.Helpers"
              FontFamily="{StaticResource AppFont}">
     <Grid Margin="{StaticResource PageMargin}">
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="520">
             <TextBlock x:Name="PageTitleText" Style="{StaticResource PageTitle}" HorizontalAlignment="Center"/>
-            <TextBlock Text="Contenu à venir." Style="{StaticResource PageSubtitle}"
+            <TextBlock Text="{h:Loc Fr='Contenu à venir.', En='Content coming soon.'}" Style="{StaticResource PageSubtitle}"
                        HorizontalAlignment="Center" Margin="0,0,0,28"/>
             <Border Style="{StaticResource GlassCard}">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="&#xE81E;" FontFamily="{StaticResource IconFont}" FontSize="28"
                                Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
                     <TextBlock Style="{StaticResource PlaceholderBody}"
-                               Text="Cette section sera ajoutée prochainement."/>
+                               Text="{h:Loc Fr='Cette section sera ajoutée prochainement.', En='This section will be added soon.'}"/>
                 </StackPanel>
             </Border>
         </StackPanel>

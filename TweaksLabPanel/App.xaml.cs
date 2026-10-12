@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using TweaksLabPanel.Core;
@@ -25,7 +25,9 @@ public partial class App : Application
             EngagementStore.Instance.RecordAppOpen();
             GpuVendorStore.Instance.Load();
             PerformanceScoreService.Initialize();
-            _ = PerformanceScoreService.EnsureScannedAsync();
+            // Nouveau scan à chaque lancement : le dernier résultat reste affiché le temps qu'il se termine.
+            _ = PerformanceScoreService.ScanAsync();
+            _ = GpuDetector.DetectAsync();
             UpdateService.QueueStartupCheck();
 
             StartupLog.Write("Creation MainWindow");
@@ -42,12 +44,19 @@ public partial class App : Application
             };
             main.Show();
             StartupLog.Write("MainWindow.Show OK");
+
+#if DEBUG
+            // Outil de test (version de développement uniquement) : TweaksLabPanel.exe --page Gpu
+            var startPage = e.Args.SkipWhile(a => a != "--page").Skip(1).FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(startPage))
+                main.NavigateTo(startPage);
+#endif
         }
         catch (Exception ex)
         {
             StartupLog.Write("ERREUR: " + ex);
             MessageBox.Show(
-                "Le panel n'a pas pu demarrer.\n\n" + ex.Message,
+                LocalizationService.T("Le panel n'a pas pu démarrer.\n\n", "The panel couldn't start.\n\n") + ex.Message,
                 "TweaksLab Panel",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
@@ -78,7 +87,7 @@ public partial class App : Application
         {
             StartupLog.Write("Dispatcher: " + args.Exception);
             MessageBox.Show(
-                "Erreur inattendue :\n\n" + args.Exception.Message,
+                LocalizationService.T("Erreur inattendue :\n\n", "Unexpected error:\n\n") + args.Exception.Message,
                 "TweaksLab Panel",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);

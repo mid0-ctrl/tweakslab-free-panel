@@ -108,6 +108,15 @@ public partial class ProfilView : UserControl
         RefreshName();
         BioBox.Text = UserProfileStore.Instance.Bio;
         RestoreSavedAvatar();
+        MemberSinceText.Text = FormatMemberSince(AppSettingsStore.Instance.FirstLaunchDate);
+    }
+
+    private static string FormatMemberSince(DateOnly date)
+    {
+        var culture = System.Globalization.CultureInfo.GetCultureInfo(LocalizationService.IsEnglish ? "en-US" : "fr-FR");
+        return LocalizationService.IsEnglish
+            ? $"Member since {date.ToString("MMMM d, yyyy", culture)}"
+            : $"Membre depuis le {date.ToString("d MMMM yyyy", culture)}";
     }
 
     public void RefreshBackgroundWallet()
@@ -122,7 +131,7 @@ public partial class ProfilView : UserControl
     {
         BackgroundWallet.Children.Clear();
         _walletCards.Clear();
-        BackgroundWalletCount.Text = $"{BackgroundCatalog.All.Length} fonds dans la bibliothèque";
+        BackgroundWalletCount.Text = LocalizationService.T($"{BackgroundCatalog.All.Length} fonds dans la bibliothèque", $"{BackgroundCatalog.All.Length} backgrounds in the library");
 
         var selectedId = BackgroundSelectionState.IsCustom
             ? BackgroundCatalog.DefaultId
@@ -411,7 +420,7 @@ public partial class ProfilView : UserControl
     {
         WallpaperGrid.Children.Clear();
         _wallpaperTiles.Clear();
-        WallpaperCountText.Text = $"{WallpaperCatalog.All.Length} fonds dans la bibliothèque";
+        WallpaperCountText.Text = LocalizationService.T($"{WallpaperCatalog.All.Length} fonds dans la bibliothèque", $"{WallpaperCatalog.All.Length} wallpapers in the library");
 
         foreach (var preset in WallpaperCatalog.Featured)
         {
@@ -474,7 +483,7 @@ public partial class ProfilView : UserControl
     {
         var dlg = new OpenFileDialog
         {
-            Title = "Importer ma photo de profil",
+            Title = LocalizationService.T("Importer ma photo de profil", "Import my profile picture"),
             Filter = "Images (*.png;*.jpg;*.jpeg;*.webp;*.bmp)|*.png;*.jpg;*.jpeg;*.webp;*.bmp",
             CheckFileExists = true
         };
@@ -581,7 +590,7 @@ public partial class ProfilView : UserControl
 
         if (!WallpaperService.Apply(index))
         {
-            MessageBox.Show("Impossible d'appliquer ce fond d'écran.", "Fonds d'écran",
+            MessageBox.Show(LocalizationService.T("Impossible d'appliquer ce fond d'écran.", "Couldn't apply this wallpaper."), LocalizationService.T("Fonds d'écran", "Wallpapers"),
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }

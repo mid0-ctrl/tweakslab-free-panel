@@ -1,6 +1,7 @@
-﻿<Window x:Class="TweaksLabPanel.MainWindow"
+<Window x:Class="TweaksLabPanel.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:h="clr-namespace:TweaksLabPanel.Helpers"
         Title="Tweaks Lab Panel"
         Width="1000" Height="660" MinWidth="860" MinHeight="580"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
@@ -160,7 +161,7 @@
                             <Ellipse Width="34" Height="34" Fill="#33FFFFFF"/>
                             <Ellipse Width="34" Height="34" Stroke="#66FFFFFF" StrokeThickness="1"/>
                             <Button x:Name="NotifBtn" Width="44" Height="44" Click="Notif_Click"
-                                    Style="{StaticResource ChromeButton}" ToolTip="Notifications">
+                                    Style="{StaticResource ChromeButton}" ToolTip="{h:Loc Fr='Notifications', En='Notifications'}">
                                 <TextBlock Text="&#xEA8F;" FontFamily="{StaticResource IconFont}" FontSize="14"
                                            Foreground="White"/>
                             </Button>
@@ -201,11 +202,11 @@
                                 <DropShadowEffect Color="Black" BlurRadius="22" ShadowDepth="6" Opacity="0.5"/>
                             </Border.Effect>
                             <StackPanel>
-                                <TextBlock Text="Notifications" FontSize="{StaticResource FontNormal}"
+                                <TextBlock Text="{h:Loc Fr='Notifications', En='Notifications'}" FontSize="{StaticResource FontNormal}"
                                            FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}"/>
                                 <Border Margin="0,10,0,0" CornerRadius="10" Padding="12"
                                         BorderBrush="#33A17BE0" BorderThickness="1" Background="#1FFFFFFF">
-                                    <TextBlock Text="Bienvenue à toi BETA Testeur" TextWrapping="Wrap"
+                                    <TextBlock Text="{h:Loc Fr='Bienvenue sur le Tweaks Lab Community', En='Welcome to the Tweaks Lab Community'}" TextWrapping="Wrap"
                                                FontSize="{StaticResource FontSmall}" FontWeight="SemiBold"
                                                Foreground="{StaticResource TextWhiteBrush}"/>
                                 </Border>
@@ -232,7 +233,7 @@
                 <Border Style="{StaticResource GlassCard}" HorizontalAlignment="Center" VerticalAlignment="Center"
                         MaxWidth="440" MinWidth="380" Padding="40,36">
                     <StackPanel>
-                        <TextBlock Text="À qui ai-je l'honneur de faire connaissance ?" FontSize="17" FontWeight="SemiBold"
+                        <TextBlock Text="{h:Loc Fr='À qui ai-je l’honneur de faire connaissance ?', En='Who do I have the pleasure of meeting?'}" FontSize="17" FontWeight="SemiBold"
                                    Foreground="{StaticResource TextWhiteBrush}" HorizontalAlignment="Center"
                                    TextWrapping="Wrap" TextAlignment="Center"
                                    Margin="0,0,0,22"/>
@@ -249,7 +250,7 @@
 
                         <Button x:Name="PseudoContinueBtn" Style="{StaticResource BlueButton}" Margin="0,26,0,0"
                                 Padding="22,12" IsEnabled="False" Click="PseudoContinue_Click">
-                            <TextBlock Text="Continuer" FontSize="15" FontWeight="SemiBold"/>
+                            <TextBlock Text="{h:Loc Fr='Continuer', En='Continue'}" FontSize="15" FontWeight="SemiBold"/>
                         </Button>
                     </StackPanel>
                 </Border>
@@ -311,10 +312,10 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button x:Name="OnboardingSkipBtn" Style="{StaticResource OutlineButton}" Padding="18,10" Margin="0,0,10,0"
                                     Click="OnboardingSkip_Click">
-                                <TextBlock x:Name="OnboardingSkipLabel" Text="Passer"/>
+                                <TextBlock x:Name="OnboardingSkipLabel"/>
                             </Button>
                             <Button x:Name="OnboardingNextBtn" Style="{StaticResource BlueButton}" Padding="18,10" Click="OnboardingNext_Click">
-                                <TextBlock x:Name="OnboardingNextLabel" Text="Suivant" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="OnboardingNextLabel" FontWeight="SemiBold"/>
                             </Button>
                         </StackPanel>
                         <StackPanel x:Name="OnboardingDots" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0"/>

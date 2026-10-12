@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using TweaksLabPanel.Helpers;
 
 namespace TweaksLabPanel.Services;
 
@@ -18,12 +19,14 @@ public static class FirmwareRebootService
             };
 
             Process.Start(psi);
-            message = "Redémarrage vers le BIOS en cours…";
+            message = LocalizationService.T("Redémarrage vers le BIOS en cours…", "Restarting into BIOS…");
             return true;
         }
         catch (System.ComponentModel.Win32Exception)
         {
-            message = "Autorisation refusée. Accepte l'invite Windows pour redémarrer dans le BIOS.";
+            message = LocalizationService.T(
+                "Autorisation refusée. Accepte l'invite Windows pour redémarrer dans le BIOS.",
+                "Permission denied. Accept the Windows prompt to restart into BIOS.");
             return false;
         }
         catch (Exception ex)

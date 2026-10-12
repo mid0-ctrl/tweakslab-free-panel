@@ -21,16 +21,26 @@ public sealed class AppSettingsStore
     public DateTime LastUpdateCheckUtc { get; private set; }
     public string? SkippedUpdateVersion { get; private set; }
 
+    /// <summary>Jour du tout premier lancement du panel sur ce PC (« Membre depuis »).</summary>
+    public DateOnly FirstLaunchDate { get; private set; }
+
     public void Load()
+    {
+        var readable = LoadFromDisk();
+        EnsureFirstLaunchDate(persist: readable);
+    }
+
+    /// <summary>false si le fichier existe mais n'a pas pu être lu (on évite alors de l'écraser).</summary>
+    private bool LoadFromDisk()
     {
         try
         {
             if (!File.Exists(_path))
-                return;
+                return true;
 
             var data = JsonSerializer.Deserialize<SettingsData>(File.ReadAllText(_path));
             if (data is null)
-                return;
+                return false;
 
             if (!string.IsNullOrWhiteSpace(data.Language))
                 Language = data.Language.Trim().ToLowerInvariant();
@@ -42,12 +52,45 @@ public sealed class AppSettingsStore
             EasterEggUnlocked = data.EasterEggUnlocked;
             LastUpdateCheckUtc = data.LastUpdateCheckUtc;
             SkippedUpdateVersion = data.SkippedUpdateVersion;
+            FirstLaunchDate = data.FirstLaunchDate ?? default;
+            return true;
         }
         catch
         {
             Language = "fr";
             KeyboardLayout = "azerty";
+            return false;
         }
+    }
+
+    private void EnsureFirstLaunchDate(bool persist)
+    {
+        if (FirstLaunchDate != default)
+            return;
+
+        // Mise à jour d'une ancienne version : la date de création des fichiers du panel donne le premier lancement.
+        var earliest = DateTime.Now;
+        try
+        {
+            var directory = Path.GetDirectoryName(_path);
+            if (!string.IsNullOrEmpty(directory) && Directory.Exists(directory))
+            {
+                foreach (var file in Directory.EnumerateFiles(directory, "*.json"))
+                {
+                    var created = File.GetCreationTime(file);
+                    if (created < earliest)
+                        earliest = created;
+                }
+            }
+        }
+        catch
+        {
+            // Ignorer : on garde aujourd'hui.
+        }
+
+        FirstLaunchDate = DateOnly.FromDateTime(earliest);
+        if (persist)
+            Persist();
     }
 
     public void SaveLanguage(string language)
@@ -108,6 +151,7 @@ public sealed class AppSettingsStore
                 EasterEggUnlocked = EasterEggUnlocked,
                 LastUpdateCheckUtc = LastUpdateCheckUtc,
                 SkippedUpdateVersion = SkippedUpdateVersion,
+                FirstLaunchDate = FirstLaunchDate == default ? null : FirstLaunchDate,
             };
             File.WriteAllText(_path, JsonSerializer.Serialize(data, JsonOptions));
         }
@@ -125,5 +169,6 @@ public sealed class AppSettingsStore
         public bool EasterEggUnlocked { get; set; }
         public DateTime LastUpdateCheckUtc { get; set; }
         public string? SkippedUpdateVersion { get; set; }
+        public DateOnly? FirstLaunchDate { get; set; }
     }
 }

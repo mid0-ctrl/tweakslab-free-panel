@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using TweaksLabPanel.Helpers;
 
 namespace TweaksLabPanel.Services;
 
@@ -123,9 +124,15 @@ public static class DisplaySettingsService
         var result = ChangeDisplaySettings(ref devMode, 0);
         message = result switch
         {
-            DispChangeSuccessful => "Paramètres d'affichage appliqués.",
-            DispChangeRestart => "Paramètres appliqués. Un redémarrage peut être nécessaire.",
-            _ => $"Impossible d'appliquer le mode ({result}).",
+            DispChangeSuccessful => LocalizationService.T(
+                "Paramètres d'affichage appliqués.",
+                "Display settings applied."),
+            DispChangeRestart => LocalizationService.T(
+                "Paramètres appliqués. Un redémarrage peut être nécessaire.",
+                "Settings applied. A restart may be required."),
+            _ => LocalizationService.T(
+                $"Impossible d'appliquer le mode ({result}).",
+                $"Couldn't apply the display mode ({result})."),
         };
         return result is DispChangeSuccessful or DispChangeRestart;
     }

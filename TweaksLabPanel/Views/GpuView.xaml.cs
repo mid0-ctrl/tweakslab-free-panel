@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TweaksLabPanel.Core;
 using TweaksLabPanel.Helpers;
+using TweaksLabPanel.Services;
 
 namespace TweaksLabPanel.Views;
 
@@ -14,6 +15,9 @@ public partial class GpuView : UserControl
     private static readonly SolidColorBrush StepBorderBrush = new(Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF));
     private static readonly SolidColorBrush StepBackgroundBrush = new(Color.FromArgb(0x1A, 0x14, 0x10, 0x22));
     private static readonly SolidColorBrush StepBadgeBrush = new(Color.FromArgb(0x44, 0xA8, 0x55, 0xF7));
+
+    private DetectedGpu? _detected;
+    private bool _forceSelection;
 
     static GpuView()
     {
@@ -27,39 +31,103 @@ public partial class GpuView : UserControl
         InitializeComponent();
         NvidiaLogo.Source = LoadGpuLogo("nvidia.png");
         AmdLogo.Source = LoadGpuLogo("amd.png");
-        Loaded += (_, _) => RefreshViewState();
+        GpuOfferText.Text = LocalizationService.T(
+            $"L’équipe TweaksLab optimise ta carte graphique avec le reste de ton PC, {OfferLinks.StartingPrice}.",
+            $"The TweaksLab team optimizes your graphics card along with the rest of your PC, {OfferLinks.StartingPrice}.");
+
+        // Détection lancée au démarrage du panel : généralement déjà terminée ici.
+        var detection = GpuDetector.DetectAsync();
+        if (detection.IsCompletedSuccessfully)
+            _detected = detection.Result;
+
+        RefreshViewState();
+        Loaded += async (_, _) =>
+        {
+            _detected = await GpuDetector.DetectAsync();
+            RefreshViewState();
+        };
     }
 
     private void NvidiaCard_Click(object sender, MouseButtonEventArgs e) => SelectVendor(GpuVendor.Nvidia);
 
     private void AmdCard_Click(object sender, MouseButtonEventArgs e) => SelectVendor(GpuVendor.Amd);
 
-    private void ChangeVendor_Click(object sender, RoutedEventArgs e)
-    {
-        GpuVendorStore.Instance.Clear();
-        RefreshViewState();
-    }
+    private void ChangeVendor_Click(object sender, RoutedEventArgs e) => ShowSelection();
+
+    private void GpuOffer_Click(object sender, RoutedEventArgs e) => OfferLinks.Open(OfferLinks.Gpu);
 
     private void SelectVendor(string vendor)
     {
         GpuVendorStore.Instance.Save(vendor);
+        _forceSelection = false;
         RefreshViewState();
     }
 
+    private void ShowSelection()
+    {
+        GpuVendorStore.Instance.Clear();
+        _forceSelection = true;
+        RefreshViewState();
+        ScrollToTop();
+    }
+
+    /// <summary>Choix manuel en priorité, sinon la carte détectée (NVIDIA / AMD).</summary>
+    private string? ResolveVendor()
+    {
+        var stored = GpuVendorStore.Instance.SelectedVendor;
+        if (stored is GpuVendor.Nvidia or GpuVendor.Amd)
+            return stored;
+
+        if (_forceSelection)
+            return null;
+
+        return _detected?.Vendor is GpuVendor.Nvidia or GpuVendor.Amd ? _detected.Vendor : null;
+    }
+
+    private bool IsShowingDetectedCard(string vendor) =>
+        GpuVendorStore.Instance.SelectedVendor is null && _detected?.Vendor == vendor;
+
     private void RefreshViewState()
     {
-        var vendor = GpuVendorStore.Instance.SelectedVendor;
+        var vendor = ResolveVendor();
         var hasSelection = vendor is GpuVendor.Nvidia or GpuVendor.Amd;
 
         SelectionPanel.Visibility = hasSelection ? Visibility.Collapsed : Visibility.Visible;
         StepsPanel.Visibility = hasSelection ? Visibility.Visible : Visibility.Collapsed;
 
+        PageSubtitleText.Text = hasSelection
+            ? LocalizationService.T("Suis les étapes dans l’ordre pour optimiser ta carte graphique.", "Follow the steps in order to optimize your graphics card.")
+            : LocalizationService.T("Sélectionne ta carte graphique pour commencer l’optimisation.", "Select your graphics card to start optimizing.");
+
+        RefreshDetectionNote();
+
         if (!hasSelection)
             return;
 
         SelectedVendorLogo.Source = LoadGpuLogo(vendor == GpuVendor.Nvidia ? "nvidia.png" : "amd.png");
-        SelectedVendorTitle.Text = vendor == GpuVendor.Nvidia ? "NVIDIA" : "AMD";
+        // Nom exact de la carte dès qu'elle correspond à la marque affichée (choix manuel ou détection).
+        SelectedVendorTitle.Text = _detected is { } detected && detected.Vendor == vendor && !string.IsNullOrWhiteSpace(detected.Name)
+            ? detected.Name
+            : vendor == GpuVendor.Nvidia ? "NVIDIA" : "AMD";
+        SelectedVendorSubtitle.Text = IsShowingDetectedCard(vendor!)
+            ? LocalizationService.T("Carte détectée automatiquement · optimisation GPU TweaksLab Community", "Card detected automatically · TweaksLab Community GPU optimization")
+            : LocalizationService.T("Optimisation GPU TweaksLab Community", "TweaksLab Community GPU optimization");
         BuildSteps(vendor!);
+    }
+
+    private void RefreshDetectionNote()
+    {
+        string? note = _detected switch
+        {
+            { Vendor: GpuVendor.Intel } gpu => LocalizationService.T(
+                $"Carte détectée : {gpu.Name}. Le guide Intel arrive bientôt. Si ton PC a aussi une carte NVIDIA ou AMD, choisis-la ci-dessus.",
+                $"Detected card: {gpu.Name}. The Intel guide is coming soon. If your PC also has an NVIDIA or AMD card, pick it above."),
+            { } gpu => LocalizationService.T($"Carte détectée : {gpu.Name}", $"Detected card: {gpu.Name}"),
+            null => null,
+        };
+
+        DetectionNoteText.Text = note ?? string.Empty;
+        DetectionNoteText.Visibility = note is null ? Visibility.Collapsed : Visibility.Visible;
     }
 
     private void BuildSteps(string vendor)
@@ -76,14 +144,18 @@ public partial class GpuView : UserControl
     {
         StepsHost.Children.Add(CreateStepCard(
             1,
-            "Réinstaller ses pilotes (DDU + Install)",
-            "Pour une installation propre, désinstalle d'abord tes anciens pilotes avec DDU, puis réinstalle la dernière version depuis le site NVIDIA.",
+            LocalizationService.T("Réinstaller ses pilotes (DDU + Install)", "Reinstall your drivers (DDU + install)"),
+            LocalizationService.T(
+                "Pour une installation propre, désinstalle d'abord tes anciens pilotes avec DDU, puis réinstalle la dernière version depuis le site NVIDIA.",
+                "For a clean install, first remove your old drivers with DDU, then install the latest version from the NVIDIA website."),
             CreateDduVideoSection(PanelEndpoints.GpuNvidiaDduVideoUrl)));
 
         StepsHost.Children.Add(CreateStepCard(
             2,
-            "Optimiser le Panneau de configuration NVIDIA",
-            "Suis les captures dans l'ordre. Ouvre le panneau NVIDIA, puis applique les mêmes réglages dans Paramètres 3D → Paramètres globaux.",
+            LocalizationService.T("Optimiser le Panneau de configuration NVIDIA", "Optimize the NVIDIA Control Panel"),
+            LocalizationService.T(
+                "Suis les captures dans l'ordre. Ouvre le panneau NVIDIA, puis applique les mêmes réglages dans Paramètres 3D → Paramètres globaux.",
+                "Follow the screenshots in order. Open the NVIDIA panel, then apply the same settings in 3D Settings → Global Settings."),
             CreateNvidiaPanelGuide()));
     }
 
@@ -91,14 +163,18 @@ public partial class GpuView : UserControl
     {
         StepsHost.Children.Add(CreateStepCard(
             1,
-            "Réinstaller ses pilotes (DDU + Install)",
-            "Pour une installation propre, désinstalle d'abord tes anciens pilotes avec DDU, puis réinstalle la dernière version depuis le site AMD.",
+            LocalizationService.T("Réinstaller ses pilotes (DDU + Install)", "Reinstall your drivers (DDU + install)"),
+            LocalizationService.T(
+                "Pour une installation propre, désinstalle d'abord tes anciens pilotes avec DDU, puis réinstalle la dernière version depuis le site AMD.",
+                "For a clean install, first remove your old drivers with DDU, then install the latest version from the AMD website."),
             CreateDduVideoSection(PanelEndpoints.GpuAmdDduVideoUrl)));
 
         StepsHost.Children.Add(CreateStepCard(
             2,
-            "Optimiser AMD Software : Adrenalin Edition",
-            "Suis les captures dans l'ordre. Ouvre AMD Software, puis reproduis les mêmes réglages dans chaque section.",
+            LocalizationService.T("Optimiser AMD Software : Adrenalin Edition", "Optimize AMD Software: Adrenalin Edition"),
+            LocalizationService.T(
+                "Suis les captures dans l'ordre. Ouvre AMD Software, puis reproduis les mêmes réglages dans chaque section.",
+                "Follow the screenshots in order. Open AMD Software, then copy the same settings in each section."),
             CreateAmdPanelGuide()));
     }
 
@@ -113,7 +189,7 @@ public partial class GpuView : UserControl
             Padding = new Thickness(18, 10, 18, 10),
             HorizontalAlignment = HorizontalAlignment.Left,
             IsEnabled = hasUrl,
-            Content = "Voir le tutoriel YouTube",
+            Content = LocalizationService.T("Voir le tutoriel YouTube", "Watch the YouTube tutorial"),
         };
 
         if (hasUrl)
@@ -125,7 +201,7 @@ public partial class GpuView : UserControl
         {
             stack.Children.Add(new TextBlock
             {
-                Text = "Le lien vidéo sera ajouté prochainement.",
+                Text = LocalizationService.T("Le lien vidéo sera ajouté prochainement.", "The video link will be added soon."),
                 Margin = new Thickness(0, 10, 0, 0),
                 FontSize = 12,
                 Foreground = Brushes.White,
@@ -141,31 +217,37 @@ public partial class GpuView : UserControl
     {
         var stack = new StackPanel { Margin = new Thickness(0, 14, 0, 0) };
 
-        stack.Children.Add(CreateGuideBullet(
-            "1. Recherche « AMD » dans Windows et ouvre « AMD Software: Adrenalin Edition »."));
-        stack.Children.Add(CreateGuideBullet(
-            "2. Paramètres (engrenage) → onglet Système → désactive « Détection de problème »."));
-        stack.Children.Add(CreateGuideBullet(
-            "3. Onglet Jeux → sélectionne ton jeu → reproduis les réglages Graphismes et Affichage."));
-        stack.Children.Add(CreateGuideBullet(
-            "4. Dans la même page Jeux, descends jusqu'à Avancé et applique les valeurs de la capture."));
-        stack.Children.Add(CreateGuideBullet(
-            "5. Paramètres → Préférences : désactive superposition, navigateur, notifications, pubs et tutoriels."));
-        stack.Children.Add(CreateGuideBullet(
-            "6. Dans Préférences, désactive aussi animations et programme d'expérience utilisateur AMD."));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "1. Recherche « AMD » dans Windows et ouvre « AMD Software: Adrenalin Edition ».",
+            "1. Search for “AMD” in Windows and open “AMD Software: Adrenalin Edition”.")));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "2. Paramètres (engrenage) → onglet Système → désactive « Détection de problème ».",
+            "2. Settings (gear) → System tab → turn off “Issue Detection”.")));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "3. Onglet Jeux → sélectionne ton jeu → reproduis les réglages Graphismes et Affichage.",
+            "3. Gaming tab → select your game → copy the Graphics and Display settings.")));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "4. Dans la même page Jeux, descends jusqu'à Avancé et applique les valeurs de la capture.",
+            "4. On the same Gaming page, scroll down to Advanced and apply the values from the screenshot.")));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "5. Paramètres → Préférences : désactive superposition, navigateur, notifications, pubs et tutoriels.",
+            "5. Settings → Preferences: turn off overlay, browser, notifications, ads and tutorials.")));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "6. Dans Préférences, désactive aussi animations et programme d'expérience utilisateur AMD.",
+            "6. In Preferences, also turn off animations and the AMD user experience program.")));
 
-        var images = new (string File, string Caption)[]
+        var images = new (string File, string CaptionFr, string CaptionEn)[]
         {
-            ("amd-panel-01-recherche.png", "Ouvrir AMD Software depuis la recherche Windows"),
-            ("amd-panel-02-systeme.png", "Paramètres → Système"),
-            ("amd-panel-03-jeux-graphismes.png", "Jeux → Graphismes & Affichage"),
-            ("amd-panel-04-jeux-avance.png", "Jeux → Réglages avancés"),
-            ("amd-panel-05-preferences-1.png", "Paramètres → Préférences (1/2)"),
-            ("amd-panel-06-preferences-2.png", "Paramètres → Préférences (2/2)"),
+            ("amd-panel-01-recherche.png", "Ouvrir AMD Software depuis la recherche Windows", "Open AMD Software from Windows search"),
+            ("amd-panel-02-systeme.png", "Paramètres → Système", "Settings → System"),
+            ("amd-panel-03-jeux-graphismes.png", "Jeux → Graphismes & Affichage", "Gaming → Graphics & Display"),
+            ("amd-panel-04-jeux-avance.png", "Jeux → Réglages avancés", "Gaming → Advanced settings"),
+            ("amd-panel-05-preferences-1.png", "Paramètres → Préférences (1/2)", "Settings → Preferences (1/2)"),
+            ("amd-panel-06-preferences-2.png", "Paramètres → Préférences (2/2)", "Settings → Preferences (2/2)"),
         };
 
         for (var i = 0; i < images.Length; i++)
-            stack.Children.Add(CreateGuideImage(images[i].File, images[i].Caption, i + 1));
+            stack.Children.Add(CreateGuideImage(images[i].File, LocalizationService.T(images[i].CaptionFr, images[i].CaptionEn), i + 1));
 
         return stack;
     }
@@ -174,23 +256,26 @@ public partial class GpuView : UserControl
     {
         var stack = new StackPanel { Margin = new Thickness(0, 14, 0, 0) };
 
-        stack.Children.Add(CreateGuideBullet(
-            "1. Paramètres 3D → Régler les paramètres d'image avec Aperçu → coche « Utiliser les paramètres d'image 3D avancés »."));
-        stack.Children.Add(CreateGuideBullet(
-            "2. Clique sur « Afficher cette page » pour ouvrir Gérer les paramètres 3D."));
-        stack.Children.Add(CreateGuideBullet(
-            "3. Dans l'onglet Paramètres globaux, reproduis les valeurs des 3 captures suivantes."));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "1. Paramètres 3D → Régler les paramètres d'image avec Aperçu → coche « Utiliser les paramètres d'image 3D avancés ».",
+            "1. 3D Settings → Adjust image settings with preview → check “Use the advanced 3D image settings”.")));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "2. Clique sur « Afficher cette page » pour ouvrir Gérer les paramètres 3D.",
+            "2. Click “Take me there” to open Manage 3D settings.")));
+        stack.Children.Add(CreateGuideBullet(LocalizationService.T(
+            "3. Dans l'onglet Paramètres globaux, reproduis les valeurs des 3 captures suivantes.",
+            "3. In the Global Settings tab, copy the values from the next 3 screenshots.")));
 
-        var images = new (string File, string Caption)[]
+        var images = new (string File, string CaptionFr, string CaptionEn)[]
         {
-            ("nvidia-panel-01-apercu.png", "Régler les paramètres d'image avec Aperçu"),
-            ("nvidia-panel-02-global-haut.png", "Paramètres globaux — haut de la liste"),
-            ("nvidia-panel-03-global-milieu.png", "Paramètres globaux — milieu de la liste"),
-            ("nvidia-panel-04-global-bas.png", "Paramètres globaux — bas de la liste"),
+            ("nvidia-panel-01-apercu.png", "Régler les paramètres d'image avec Aperçu", "Adjust image settings with preview"),
+            ("nvidia-panel-02-global-haut.png", "Paramètres globaux — haut de la liste", "Global Settings — top of the list"),
+            ("nvidia-panel-03-global-milieu.png", "Paramètres globaux — milieu de la liste", "Global Settings — middle of the list"),
+            ("nvidia-panel-04-global-bas.png", "Paramètres globaux — bas de la liste", "Global Settings — bottom of the list"),
         };
 
         for (var i = 0; i < images.Length; i++)
-            stack.Children.Add(CreateGuideImage(images[i].File, images[i].Caption, i + 1));
+            stack.Children.Add(CreateGuideImage(images[i].File, LocalizationService.T(images[i].CaptionFr, images[i].CaptionEn), i + 1));
 
         return stack;
     }
@@ -213,7 +298,7 @@ public partial class GpuView : UserControl
 
         panel.Children.Add(new TextBlock
         {
-            Text = $"Capture {index} — {caption}",
+            Text = LocalizationService.T($"Capture {index} — {caption}", $"Screenshot {index} — {caption}"),
             FontSize = 12,
             FontWeight = FontWeights.SemiBold,
             Foreground = Brushes.White,
@@ -354,13 +439,10 @@ public partial class GpuView : UserControl
 
     public bool TryEscapeBack()
     {
-        var vendor = GpuVendorStore.Instance.SelectedVendor;
-        if (vendor is not (GpuVendor.Nvidia or GpuVendor.Amd))
+        if (ResolveVendor() is not (GpuVendor.Nvidia or GpuVendor.Amd))
             return false;
 
-        GpuVendorStore.Instance.Clear();
-        RefreshViewState();
-        ScrollToTop();
+        ShowSelection();
         return true;
     }
 }

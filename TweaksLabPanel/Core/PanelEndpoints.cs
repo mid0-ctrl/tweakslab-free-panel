@@ -13,6 +13,10 @@ public static class PanelEndpoints
     public const string PanelChatApiKey = "53cdcf9d02bba08fad7eae6de33eae261c61dc070a9034036af0a236d913c0be";
     public const string WebsiteUrl = "https://tweakslab.fr";
 
+    /// <summary>Prix d'entrée de l'optimisation complète affiché dans le panel (un seul endroit à modifier).</summary>
+    public const string OfferStartingPriceFr = "24,99 €";
+    public const string OfferStartingPriceEn = "€24.99";
+
     public const string SocialX = "https://x.com/TweaksLab_";
     public const string SocialTikTok = "https://www.tiktok.com/@tweakslab";
     public const string SocialYoutube = "https://www.youtube.com/@TweaksLab";

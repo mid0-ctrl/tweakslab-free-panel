@@ -16,7 +16,8 @@ public static class TweaksLabPowerPlanService
 {
     public const string PlanDisplayName = "Free Tweaks Lab";
 
-    private const string BalancedGuid = "381b4222-f694-41f0-9685-ff1bb2600002";
+    // Plan Windows « Utilisation normale » (Balanced).
+    private const string BalancedGuid = "381b4222-f694-41f0-9685-ff5bb260df2e";
 
     private static readonly string[] PlanSearchNames =
     [
@@ -71,14 +72,14 @@ public static class TweaksLabPowerPlanService
                 SaveInstalled(existingGuid);
                 RunPowerCfg($"/setactive {existingGuid}");
                 if (!IsActive())
-                    return Fail("Plan déjà installé mais impossible de l'activer.");
+                    return Fail(LocalizationService.T("Plan déjà installé mais impossible de l'activer.", "Plan already installed but couldn't be activated."));
 
                 return Ok();
             }
 
             var powPath = AssetHelper.PowerPlan;
             if (!File.Exists(powPath))
-                return Fail("Fichier du plan d'alimentation introuvable.");
+                return Fail(LocalizationService.T("Fichier du plan d'alimentation introuvable.", "Power plan file not found."));
 
             var output = RunPowerCfg($"/import \"{powPath}\"");
             var importedGuid = ExtractGuid(output);
@@ -86,7 +87,7 @@ public static class TweaksLabPowerPlanService
             {
                 importedGuid = FindPlanGuidByName();
                 if (importedGuid is null)
-                    return Fail("Impossible d'installer le plan d'alimentation.");
+                    return Fail(LocalizationService.T("Impossible d'installer le plan d'alimentation.", "Couldn't install the power plan."));
             }
 
             SaveInstalled(importedGuid);
@@ -95,13 +96,13 @@ public static class TweaksLabPowerPlanService
 
             RunPowerCfg($"/setactive {importedGuid}");
             if (!IsActive())
-                return Fail("Plan importé mais impossible de l'activer.");
+                return Fail(LocalizationService.T("Plan importé mais impossible de l'activer.", "Plan imported but couldn't be activated."));
 
             return Ok();
         }
         catch
         {
-            return Fail("Impossible d'installer le plan d'alimentation.");
+            return Fail(LocalizationService.T("Impossible d'installer le plan d'alimentation.", "Couldn't install the power plan."));
         }
     }
 
@@ -110,23 +111,23 @@ public static class TweaksLabPowerPlanService
         try
         {
             if (!IsInstalled())
-                return Fail("Installe d'abord le plan TweaksLab Community.");
+                return Fail(LocalizationService.T("Installe d'abord le plan TweaksLab Community.", "Install the TweaksLab Community plan first."));
 
             var planGuid = TweaksLabPowerPlanState.PlanGuid ?? FindPlanGuidByName();
             if (string.IsNullOrWhiteSpace(planGuid))
-                return Fail("Installe d'abord le plan TweaksLab Community.");
+                return Fail(LocalizationService.T("Installe d'abord le plan TweaksLab Community.", "Install the TweaksLab Community plan first."));
 
             CaptureFallbackBeforeActivation();
 
             RunPowerCfg($"/setactive {planGuid}");
             if (!IsActive())
-                return Fail("Impossible d'activer le plan.");
+                return Fail(LocalizationService.T("Impossible d'activer le plan.", "Couldn't activate the plan."));
 
             return Ok();
         }
         catch
         {
-            return Fail("Impossible d'activer le plan.");
+            return Fail(LocalizationService.T("Impossible d'activer le plan.", "Couldn't activate the plan."));
         }
     }
 
@@ -138,13 +139,13 @@ public static class TweaksLabPowerPlanService
             RunPowerCfg($"/setactive {restore}");
 
             if (IsActive())
-                return Fail("Impossible de désactiver le plan.");
+                return Fail(LocalizationService.T("Impossible de désactiver le plan.", "Couldn't deactivate the plan."));
 
             return Ok();
         }
         catch
         {
-            return Fail("Impossible de désactiver le plan.");
+            return Fail(LocalizationService.T("Impossible de désactiver le plan.", "Couldn't deactivate the plan."));
         }
     }
 

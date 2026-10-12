@@ -75,13 +75,27 @@ Inspire du bot Discord/site (prix, vente consultative) + logique panel :
 
 | Situation | Reponse |
 |-----------|---------|
-| Question score / perf | Astuces + Recommandations + GPU dans le panel, plafond ~20% gratuit, puis opti payante + lien |
+| Question score / perf | Le score de santé (0 à 90) est mesuré par le panel : expliquer les points faibles envoyés dans le contexte, renvoyer vers Astuces / Nettoyer / GPU / tuto XMP, puis présenter l'opti complète + lien |
 | Probleme PC simple | Conseil concret dans le logiciel |
 | Probleme trop dur (BIOS, OC, bug persistant) | Aide prudente + bouton Discord |
 | Client frustre | Zero vente, aide + Discord |
-| Conseils gratuits confirmes | Felicite, +20% boost session, closing vers opti des 24,99€ |
+| Conseils gratuits confirmes | Félicite, invite à cliquer « Recalculer mon score » dans le panel (vraie mesure, aucun bonus), puis : avec l'optimisation complète ce sera toujours mieux, l'équipe va chercher autour de 100 % des performances du PC, dès 24,99 € |
 
-Reponse API : `{ reply, cta?, ticketCta?, scoreBoost? }` — le panel affiche les liens cliquables sous le message.
+Reponse API : `{ reply, cta?, ticketCta? }` — le panel affiche les liens cliquables sous le message.
+`scoreBoost` n'est plus utilisé : le panel l'ignore. Le score ne monte que sur une vraie nouvelle mesure. Retirer le bonus du prompt du bot.
+
+## Côté panel (limites et contexte)
+
+- **Limites locales** : 30 messages / jour / PC, 4 s entre deux messages, 500 caractères max par message,
+  10 derniers messages d'historique renvoyés. Elles s'ajoutent aux limites du serveur ci-dessus
+  (garder `SESSION_DAILY_LIMIT` au-dessus de 30 pour que le panel prévienne avant le serveur).
+- **HTTP 429** : le panel affiche « beaucoup de messages en peu de temps » + lien Discord.
+- **Contexte PC** : en tête d'historique, le panel envoie une paire `user` / `assistant` :
+  `[Infos envoyées automatiquement par le panel TweaksLab…] Score de santé /90 · points à améliorer mesurés · CPU · GPU · RAM · Windows · XMP/EXPO ·
+  applis au démarrage · températures (si disponibles) · jeux favoris · langue`. Aucun pseudo ni donnée perso.
+  Si le serveur refuse cet historique (erreur 4xx), le panel renvoie le message une fois sans le contexte.
+- La clé `PanelChatApiKey` est publique (dépôt public, exe décompilable) : seules les limites du serveur protègent
+  réellement la clé Anthropic. Les vérifier sur Railway.
 
 ## Isolation garantie
 

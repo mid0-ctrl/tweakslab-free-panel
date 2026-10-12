@@ -1,8 +1,13 @@
+using TweaksLabPanel.Helpers;
+
 namespace TweaksLabPanel.Core;
 
 public static class BackgroundCatalog
 {
-    public sealed record Preset(string Id, string Label, string FileName, DateTime? AddedAt = null);
+    public sealed record Preset(string Id, string LabelFr, string FileName, DateTime? AddedAt = null, string? LabelEn = null)
+    {
+        public string Label => LocalizationService.T(LabelFr, LabelEn ?? LabelFr);
+    }
 
     private static readonly DateTime NewBatchDate = new(2026, 7, 1);
 
@@ -12,26 +17,26 @@ public static class BackgroundCatalog
         new("gon", "Gon", "bg-gon.png"),
         new("pain", "Pain", "bg-pain.png"),
         new("minecraft", "Minecraft", "bg-minecraft.png"),
-        new("minecraft2", "Caverne", "bg-minecraft-2.png"),
-        new("lake", "Lac", "bg-lake.png"),
+        new("minecraft2", "Caverne", "bg-minecraft-2.png", LabelEn: "Cave"),
+        new("lake", "Lac", "bg-lake.png", LabelEn: "Lake"),
         new("gta6", "GTA VI", "bg-gta6.png"),
         new("tanjiro", "Tanjiro", "bg-tanjiro.png"),
         new("luffy", "Luffy", "bg-luffy.png"),
         new("surfsup", "Surf's Up", "bg-surfs-up.png"),
         new("aurora", "Aurora", "aurora.png"),
         new("violet", "Violet", "aurora-purple.png"),
-        new("midnight", "Minuit", "aurora-midnight.png"),
-        new("samurai", "Samouraï", "aurora-samurai.png"),
-        new("flame", "Flamme", "aurora-flame.png"),
-        new("sunset", "Plage", "aurora-sunset.png"),
+        new("midnight", "Minuit", "aurora-midnight.png", LabelEn: "Midnight"),
+        new("samurai", "Samouraï", "aurora-samurai.png", LabelEn: "Samurai"),
+        new("flame", "Flamme", "aurora-flame.png", LabelEn: "Flame"),
+        new("sunset", "Plage", "aurora-sunset.png", LabelEn: "Beach"),
         new("dragon", "Dragon", "aurora-dragon.png"),
-        new("balancoire", "Balançoire", "bg-balancoire.png", NewBatchDate),
+        new("balancoire", "Balançoire", "bg-balancoire.png", NewBatchDate, "Swing"),
         new("gta5", "GTA V", "bg-gta5.png", NewBatchDate),
         new("fortnitebus", "Fortnite", "bg-fortnite-bus.png", NewBatchDate),
         new("neonwave", "Neon", "bg-neon-wave.png", NewBatchDate),
         new("klombo", "Valorant", "bg-klombo.png", NewBatchDate),
-        new("montagne", "Montagne", "bg-montagne.png", NewBatchDate),
-        new("japan", "Japon", "bg-japan.png", NewBatchDate),
+        new("montagne", "Montagne", "bg-montagne.png", NewBatchDate, "Mountain"),
+        new("japan", "Japon", "bg-japan.png", NewBatchDate, "Japan"),
     ];
 
     public static string DefaultId => "japan";

@@ -1,39 +1,40 @@
 <UserControl x:Class="TweaksLabPanel.Views.ParametresView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:TweaksLabPanel.Helpers"
              FontFamily="{StaticResource AppFont}">
     <ScrollViewer Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
         <StackPanel MaxWidth="860" HorizontalAlignment="Center">
-            <TextBlock Text="Paramètres" Style="{StaticResource PageTitle}"/>
-            <TextBlock Text="Configure ton affichage et personnalise ton bureau." Style="{StaticResource PageSubtitle}" Margin="0,0,0,24"/>
+            <TextBlock Text="{h:Loc Fr='Paramètres', En='Settings'}" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="{h:Loc Fr='Configure ton affichage et personnalise ton bureau.', En='Set up your display and customize your desktop.'}" Style="{StaticResource PageSubtitle}" Margin="0,0,0,24"/>
 
             <Border Style="{StaticResource GlassCard}" Margin="0,0,0,14">
                 <StackPanel>
-                    <TextBlock Text="AFFICHAGE" Style="{StaticResource SectionTitle}"/>
-                    <TextBlock Text="Mode actuel" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Text="{h:Loc Fr='AFFICHAGE', En='DISPLAY'}" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{h:Loc Fr='Mode actuel', En='Current mode'}" Style="{StaticResource FieldLabel}"/>
                     <Border Style="{StaticResource ReadOnlyField}" Margin="0,0,0,14">
                         <TextBlock x:Name="CurrentModeText" Foreground="{StaticResource TextWhiteBrush}" FontSize="13"/>
                     </Border>
-                    <TextBlock Text="Résolution" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Text="{h:Loc Fr='Résolution', En='Resolution'}" Style="{StaticResource FieldLabel}"/>
                     <ComboBox x:Name="ResolutionCombo" Margin="0,0,0,14" Padding="10,8"
                               SelectionChanged="ResolutionCombo_SelectionChanged"/>
-                    <TextBlock Text="Fréquence de rafraîchissement" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Text="{h:Loc Fr='Fréquence de rafraîchissement', En='Refresh rate'}" Style="{StaticResource FieldLabel}"/>
                     <ComboBox x:Name="RefreshCombo" Margin="0,0,0,14" Padding="10,8"/>
-                    <Button Style="{StaticResource OutlineButton}" Content="Appliquer" HorizontalAlignment="Left" Padding="20,10"
+                    <Button Style="{StaticResource OutlineButton}" Content="{h:Loc Fr='Appliquer', En='Apply'}" HorizontalAlignment="Left" Padding="20,10"
                             Click="ApplyDisplay_Click"/>
                 </StackPanel>
             </Border>
 
             <Border Style="{StaticResource GlassCard}" Margin="0,0,0,14">
                 <StackPanel>
-                    <TextBlock Text="PRÉFÉRENCES" Style="{StaticResource SectionTitle}"/>
-                    <TextBlock Text="Langue" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Text="{h:Loc Fr='PRÉFÉRENCES', En='PREFERENCES'}" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{h:Loc Fr='Langue', En='Language'}" Style="{StaticResource FieldLabel}"/>
                     <ComboBox x:Name="LanguageCombo" Margin="0,0,0,14" Padding="10,8"
                               SelectionChanged="LanguageCombo_SelectionChanged">
                         <ComboBoxItem Content="Français"/>
                         <ComboBoxItem Content="English"/>
                     </ComboBox>
-                    <TextBlock Text="Disposition clavier" Style="{StaticResource FieldLabel}"/>
+                    <TextBlock Text="{h:Loc Fr='Disposition clavier', En='Keyboard layout'}" Style="{StaticResource FieldLabel}"/>
                     <ComboBox x:Name="KeyboardCombo" Padding="10,8"
                               SelectionChanged="KeyboardCombo_SelectionChanged">
                         <ComboBoxItem Content="AZERTY"/>

@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32;
 using TweaksLabPanel.Core;
+using TweaksLabPanel.Helpers;
 
 namespace TweaksLabPanel.Services;
 
@@ -112,7 +113,7 @@ public static class WindowsAppearanceService
             {
                 DiagnosticLog.Write(LogCategory, $"Enable: échec final. {mismatch2}");
                 LogRegistrySnapshot("Enable échec");
-                return Fail("Les réglages n'ont pas pu être vérifiés après application.");
+                return Fail(LocalizationService.T("Les réglages n'ont pas pu être vérifiés après application.", "The settings couldn't be verified after applying them."));
             }
 
             WindowsAppearanceState.Active = true;
@@ -124,7 +125,7 @@ public static class WindowsAppearanceService
         {
             DiagnosticLog.WriteException(LogCategory, ex, "Enable exception");
             LogRegistrySnapshot("Enable exception");
-            return Fail("Impossible d'appliquer les réglages d'apparence.");
+            return Fail(LocalizationService.T("Impossible d'appliquer les réglages d'apparence.", "Couldn't apply the appearance settings."));
         }
     }
 
@@ -147,7 +148,7 @@ public static class WindowsAppearanceService
             {
                 DiagnosticLog.Write(LogCategory, $"Disable: échec final. {mismatch2}");
                 LogRegistrySnapshot("Disable échec");
-                return Fail("Les réglages n'ont pas pu être vérifiés après restauration.");
+                return Fail(LocalizationService.T("Les réglages n'ont pas pu être vérifiés après restauration.", "The settings couldn't be verified after restoring them."));
             }
 
             WindowsAppearanceState.Active = false;
@@ -159,7 +160,7 @@ public static class WindowsAppearanceService
         {
             DiagnosticLog.WriteException(LogCategory, ex, "Disable exception");
             LogRegistrySnapshot("Disable exception");
-            return Fail("Impossible de restaurer les réglages d'apparence.");
+            return Fail(LocalizationService.T("Impossible de restaurer les réglages d'apparence.", "Couldn't restore the appearance settings."));
         }
     }
 

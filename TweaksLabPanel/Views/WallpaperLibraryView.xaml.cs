@@ -31,8 +31,8 @@ public partial class WallpaperLibraryView : UserControl
     public void ConfigureReturn(string returnTo)
     {
         BackButtonText.Text = returnTo == "Accueil"
-            ? "Retour à l'accueil"
-            : "Retour au profil";
+            ? LocalizationService.T("Retour à l'accueil", "Back to home")
+            : LocalizationService.T("Retour au profil", "Back to profile");
     }
 
     public void ScrollToBottom()
@@ -67,7 +67,9 @@ public partial class WallpaperLibraryView : UserControl
 
         if (!WallpaperService.Apply(index))
         {
-            MessageBox.Show("Impossible d'appliquer ce fond d'écran.", "Fonds d'écran",
+            MessageBox.Show(
+                LocalizationService.T("Impossible d'appliquer ce fond d'écran.", "Couldn't apply this wallpaper."),
+                LocalizationService.T("Fonds d'écran", "Wallpapers"),
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }

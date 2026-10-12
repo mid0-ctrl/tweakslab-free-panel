@@ -1,7 +1,6 @@
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using TweaksLabPanel.Core;
+using TweaksLabPanel.Helpers;
 
 namespace TweaksLabPanel.Views;
 
@@ -11,6 +10,6 @@ public partial class ReinstallationView : UserControl
 
     private void LaunchInstaller_Click(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo(PanelEndpoints.WebsiteUrl) { UseShellExecute = true });
+        OfferLinks.Open(OfferLinks.Reinstall);
     }
 }

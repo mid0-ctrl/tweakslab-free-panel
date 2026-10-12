@@ -1,11 +1,12 @@
 <UserControl x:Class="TweaksLabPanel.Views.AstucesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:h="clr-namespace:TweaksLabPanel.Helpers"
              FontFamily="{StaticResource AppFont}">
     <ScrollViewer x:Name="PageScroll" Style="{StaticResource PageScrollViewer}" Margin="{StaticResource PageMargin}">
             <StackPanel x:Name="OnboardingAstucesContent" MaxWidth="860" HorizontalAlignment="Center">
-            <TextBlock Text="Astuces" Style="{StaticResource PageTitle}"/>
-            <TextBlock Text="Optimisations gratuites TweaksLab Community pour tirer le meilleur de ton PC."
+            <TextBlock Text="{h:Loc Fr='Astuces', En='Tweaks'}" Style="{StaticResource PageTitle}"/>
+            <TextBlock Text="{h:Loc Fr='Optimisations gratuites TweaksLab Community pour tirer le meilleur de ton PC.', En='Free TweaksLab Community optimizations to get the most out of your PC.'}"
                        Style="{StaticResource PageSubtitle}" Margin="0,0,0,24"/>
 
             <!-- Plan d'alimentation -->
@@ -31,7 +32,7 @@
 
                     <StackPanel Grid.Column="1">
                         <StackPanel x:Name="OnboardingPowerPlanHeader" Orientation="Horizontal">
-                            <TextBlock Text="Plan d'alimentation TweaksLab Community" FontSize="{StaticResource FontNormal}"
+                            <TextBlock Text="{h:Loc Fr='Plan d’alimentation TweaksLab Community', En='TweaksLab Community power plan'}" FontSize="{StaticResource FontNormal}"
                                        FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}" VerticalAlignment="Center"/>
                             <Border x:Name="PowerStatusPill" Margin="10,0,0,0" Padding="8,3" CornerRadius="8"
                                     BorderBrush="#33FFFFFF" BorderThickness="1" VerticalAlignment="Center">
@@ -43,13 +44,13 @@
                             </Border>
                         </StackPanel>
 
-                        <TextBlock Text="Plan gratuit optimisé pour le gaming. L'installation l'active tout de suite ; la désactivation remet ton plan précédent."
+                        <TextBlock Text="{h:Loc Fr='Plan gratuit optimisé pour le gaming. L’installation l’active tout de suite ; la désactivation remet ton plan précédent.', En='Free plan tuned for gaming. Installing it turns it on right away; turning it off restores your previous plan.'}"
                                    TextWrapping="Wrap" Margin="0,8,0,0" FontSize="{StaticResource FontSmall}"
                                    Foreground="{StaticResource TextWhiteBrush}" Opacity="0.88" LineHeight="20"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
                             <Button x:Name="InstallPowerPlanButton" Style="{StaticResource SaveButton}"
-                                    MinWidth="170" Click="InstallPowerPlanButton_Click" Content="Installer le plan"/>
+                                    MinWidth="170" Click="InstallPowerPlanButton_Click" Content="{h:Loc Fr='Installer le plan', En='Install the plan'}"/>
                             <TextBlock x:Name="PowerFeedbackText" Margin="14,0,0,0" VerticalAlignment="Center"
                                        FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
                                        Foreground="{StaticResource TextDimBrush}" Visibility="Collapsed"/>
@@ -63,12 +64,12 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Activer le plan" FontWeight="SemiBold"
+                                    <TextBlock Text="{h:Loc Fr='Activer le plan', En='Turn on the plan'}" FontWeight="SemiBold"
                                                FontSize="{StaticResource FontNormal}" Foreground="{StaticResource TextWhiteBrush}"/>
                                     <TextBlock x:Name="PowerToggleHint" Margin="0,4,0,0"
                                                FontSize="{StaticResource FontSmall}" Foreground="{StaticResource TextDimBrush}"
                                                TextWrapping="Wrap"
-                                               Text="Bascule vers le plan TweaksLab Community ou revient au plan précédent."/>
+                                               Text="{h:Loc Fr='Bascule vers le plan TweaksLab Community ou revient au plan précédent.', En='Switch to the TweaksLab Community plan or go back to your previous plan.'}"/>
                                 </StackPanel>
                                 <ToggleButton x:Name="PowerPlanToggle" Grid.Column="1"
                                               Style="{StaticResource AccentToggle}" VerticalAlignment="Center"
@@ -102,7 +103,7 @@
 
                     <StackPanel Grid.Column="1">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Optimiser l'apparence de Windows" FontSize="{StaticResource FontNormal}"
+                            <TextBlock Text="{h:Loc Fr='Optimiser l’apparence de Windows', En='Optimize Windows visual effects'}" FontSize="{StaticResource FontNormal}"
                                        FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}" VerticalAlignment="Center"/>
                             <Border x:Name="AppearanceStatusPill" Margin="10,0,0,0" Padding="8,3" CornerRadius="8"
                                     BorderBrush="#33FFFFFF" BorderThickness="1" VerticalAlignment="Center">
@@ -114,17 +115,13 @@
                             </Border>
                         </StackPanel>
 
-                        <TextBlock Text="Applique le profil TweaksLab des Options de performances (3 cases cochées). Ferme la fenêtre Options de performances avant de basculer, puis rouvre-la pour vérifier."
+                        <TextBlock Text="{h:Loc Fr='Applique le profil TweaksLab des Options de performances (3 cases cochées). Ferme la fenêtre Options de performances avant de basculer, puis rouvre-la pour vérifier.', En='Applies the TweaksLab profile in Performance Options (3 boxes checked). Close the Performance Options window before switching, then reopen it to check.'}"
                                    TextWrapping="Wrap" Margin="0,8,0,0" FontSize="{StaticResource FontSmall}"
                                    Foreground="{StaticResource TextWhiteBrush}" Opacity="0.88" LineHeight="20"/>
 
                         <TextBlock x:Name="AppearanceFeedbackText" Margin="0,14,0,0"
                                    FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
                                    Foreground="{StaticResource TextDimBrush}" Visibility="Collapsed"/>
-
-                        <TextBlock x:Name="AppearanceLogHintText" Margin="0,8,0,0"
-                                   FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
-                                   Foreground="{StaticResource TextDimBrush}" Opacity="0.75"/>
 
                         <Border Margin="0,18,0,0" Padding="14,12" CornerRadius="12"
                                 BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Background="#1A141022">
@@ -134,9 +131,9 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Activer l'optimisation" FontWeight="SemiBold"
+                                    <TextBlock Text="{h:Loc Fr='Activer l’optimisation', En='Turn on the optimization'}" FontWeight="SemiBold"
                                                FontSize="{StaticResource FontNormal}" Foreground="{StaticResource TextWhiteBrush}"/>
-                                    <TextBlock Text="Bascule le profil optimisé TweaksLab ou restaure toutes les cases cochées."
+                                    <TextBlock Text="{h:Loc Fr='Bascule le profil optimisé TweaksLab ou restaure toutes les cases cochées.', En='Switch to the optimized TweaksLab profile or restore all boxes checked.'}"
                                                Margin="0,4,0,0" FontSize="{StaticResource FontSmall}"
                                                Foreground="{StaticResource TextDimBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
@@ -173,7 +170,7 @@
 
                         <StackPanel Grid.Column="1">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Applications au démarrage" FontSize="{StaticResource FontNormal}"
+                                <TextBlock Text="{h:Loc Fr='Applications au démarrage', En='Startup apps'}" FontSize="{StaticResource FontNormal}"
                                            FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}" VerticalAlignment="Center"/>
                                 <Border Margin="10,0,0,0" Padding="8,3" CornerRadius="8"
                                         BorderBrush="#33FFFFFF" BorderThickness="1" VerticalAlignment="Center">
@@ -185,7 +182,7 @@
                                 </Border>
                             </StackPanel>
 
-                            <TextBlock Text="Moins tu as d'applications au démarrage, plus ton PC sera rapide. Désactive celles dont tu n'as pas besoin."
+                            <TextBlock Text="{h:Loc Fr='Moins tu as d’applications au démarrage, plus ton PC sera rapide. Désactive celles dont tu n’as pas besoin.', En='The fewer apps launch at startup, the faster your PC. Turn off the ones you don’t need.'}"
                                        TextWrapping="Wrap" Margin="0,8,0,0" FontSize="{StaticResource FontSmall}"
                                        Foreground="{StaticResource TextWhiteBrush}" Opacity="0.88" LineHeight="20"/>
 
@@ -204,17 +201,35 @@
                     <TextBlock x:Name="StartupEmptyText" Margin="0,18,0,0"
                                FontSize="{StaticResource FontSmall}"
                                Foreground="{StaticResource TextDimBrush}" Visibility="Collapsed"
-                               Text="Aucune application détectée au démarrage."/>
+                               Text="{h:Loc Fr='Aucune application détectée au démarrage.', En='No startup apps detected.'}"/>
 
                     <Expander x:Name="StartupAppsExpander" Style="{StaticResource GlassExpander}"
                               Margin="0,18,0,0" IsExpanded="False" Visibility="Collapsed">
                         <Expander.Header>
-                            <TextBlock x:Name="StartupExpanderTitle" Text="Voir les applications"
+                            <TextBlock x:Name="StartupExpanderTitle" Text="{h:Loc Fr='Voir les applications', En='See the apps'}"
                                        Foreground="{StaticResource TextWhiteBrush}" FontWeight="SemiBold"/>
                         </Expander.Header>
                         <StackPanel x:Name="StartupAppsList" Margin="0,10,0,2"/>
                     </Expander>
                 </StackPanel>
+            </Border>
+
+            <!-- Aller plus loin : l'optimisation complète, après les réglages gratuits -->
+            <Border Style="{StaticResource GlassCard}" Margin="0,14,0,8" Padding="20,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                        <TextBlock Text="{h:Loc Fr='Envie d’aller plus loin ?', En='Want to go further?'}" FontSize="{StaticResource FontNormal}"
+                                   FontWeight="SemiBold" Foreground="{StaticResource TextWhiteBrush}"/>
+                        <TextBlock x:Name="TipsOfferText" Margin="0,4,0,0" FontSize="{StaticResource FontSmall}" TextWrapping="Wrap"
+                                   Foreground="{StaticResource TextLightGrayBrush}"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Style="{StaticResource PurpleButton}" VerticalAlignment="Center"
+                            Content="{h:Loc Fr='Découvrir l’optimisation', En='Discover the optimization'}" Click="TipsOffer_Click"/>
+                </Grid>
             </Border>
         </StackPanel>
     </ScrollViewer>

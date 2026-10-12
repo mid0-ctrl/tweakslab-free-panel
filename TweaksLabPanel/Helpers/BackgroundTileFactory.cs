@@ -130,7 +130,7 @@ public static class BackgroundTileFactory
                         },
                         new TextBlock
                         {
-                            Text = "Importer",
+                            Text = LocalizationService.T("Importer", "Import"),
                             Foreground = Brushes.White,
                             FontWeight = FontWeights.SemiBold,
                             FontSize = 12,
